@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Digital Library - Home</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Lora; /* Changed to Lora for consistency */
+      transition: background 0.3s, color 0.3s;
+      background: #ffffff;
+    }
+
+    /* Styles for the animated shapes background */
+    .shapes {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0.3;
+    }
+
+    .shape {
+      position: absolute;
+      font-size: 24px;
+      color: rgba(0, 169, 157, 0.2);
+      animation: floatShape 15s linear infinite;
+    }
+
+    @keyframes floatShape {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-120vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Header styles */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      font-size: 20px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      background-color: #00a99d;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img.icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    .logo h1 {
+      margin: 0;
+      font-size: 34px;
+      color: white;
+    }
+
+    nav {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    nav a {
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-weight: bold;
+      color: white;
+      transition: background 0.3s;
+    }
+
+    nav a:hover {
+      background-color: white;
+      color: #333;
+    }
+
+    .toggle-btn {
+      background: white;
+      color: #00a99d;
+      border: none;
+      border-radius: 5px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .toggle-btn:hover {
+      background: #007f78;
+      color: white;
+    }
+
+    /* Original styles for the library content */
+    .header-bar { /* This class is now merged into the main header, but keeping for search/theme button styling */
+      display: flex;
+      align-items: center;
+      justify-content: flex-end; /* Align to the right, after nav */
+      padding: 20px 40px; /* Padding for search and theme button */
+      background-color: transparent; /* Remove background, as header has one */
+      flex-wrap: wrap;
+      margin-top: 20px; /* Space below sticky header */
+    }
+
+    .dark-mode .header-bar {
+      background-color: transparent;
+    }
+
+    #toggleTheme {
+      padding: 10px 20px;
+      font-size: 15px;
+      cursor: pointer;
+      background-color: #00a99d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    #toggleTheme:hover {
+      background-color: #007f78;
+      transform: scale(1.05);
+    }
+
+    #searchInput {
+      flex: 1;
+      max-width: 500px;
+      margin-left: 20px;
+      padding: 10px 15px;
+      font-size: 18px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .library-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
+      gap: 30px;
+      padding: 20px 40px 40px 40px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .card {
+      background: #f0f0f0; /* Light background for card */
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      padding: 20px;
+      transition: transform 0.2s, background 0.3s;
+      color: #333; /* Default text color */
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      background: #e0e0e0;
+    }
+
+    .card-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      background-color: #e0f7f5;
+    }
+
+    .genre-link {
+      display: block;
+      width: 100%;
+      background-color: #00a99d;
+      color: white; /* Changed to white for better contrast */
+      padding: 10px 0;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .genre-link:hover {
+      background-color: #007f78;
+      color: #fff;
+    }
+
+    /* Dark mode styles */
+    .dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    .dark-mode header {
+      background-color: #11b8be;
+    }
+
+    .dark-mode nav a {
+      color: #e0e0e0;
+    }
+
+    .dark-mode nav a:hover {
+      background-color: #e0e0e0;
+      color: #121212;
+    }
+
+    .dark-mode .toggle-btn {
+      background-color: #e0e0e0;
+      color: #121212;
+    }
+
+    .dark-mode .shape {
+      color: rgba(74, 26, 232, 0.616);
+    }
+
+    .dark-mode .card {
+      background: #333a44;
+      color: #e0e0e0; /* Dark mode text color for cards */
+    }
+
+    .dark-mode .genre-link {
+      background-color: #007f78; /* Darker green for dark mode links */
+      color: #e0e0e0; /* White text for dark mode links */
+    }
+     .dark-mode #searchInput {
+      background-color: #333a44;
+      border-color: #555;
+      color: #e0e0e0;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: center;
+        padding: 15px 20px;
+      }
+      nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 15px;
+        gap: 10px;
+      }
+      .logo h1 {
+        font-size: 28px;
+      }
+      .header-bar {
+        flex-direction: column;
+        align-items: center;
+        margin-top: 10px;
+        padding: 10px 20px;
+      }
+      #searchInput {
+        margin-left: 0;
+        margin-top: 15px;
+        width: 90%;
+        max-width: unset;
+      }
+      .library-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shapes" id="shapes-container"></div>
+
+  <header>
+    <div class="logo">
+      <img src="images/Library icon-Photoroom.png" class="icon" alt="Library Icon" />
+      <h1>eBookNest</h1>
+    </div>
+
+    <nav>
+      <a href="main.html">Home</a>
+            <a href="about2.html">About</a>
+            <a href="contact trail.html">Contact Us</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="Loginnew.html">Login</a>
+      <button class="toggle-btn" onclick="toggleDarkMode()">🌙Dark</button>
+    </nav>
+  </header>
+
+  <div class="header-bar">
+    <input type="text" id="searchInput" placeholder="Search genres..." />
+  </div>
+
+  <div class="library-grid">
+    <div class="card">
+      <img src="./images/fiction.png" alt="Fiction" class="card-image" />
+      <a href="fiction trial.html" class="genre-link" title="Imaginative storytelling including novels and short stories.">FICTION</a>
+    </div>
+    <div class="card">
+      <img src="./images/Science.png" alt="Science" class="card-image" />
+      <a href="science trial.html" class="genre-link" title="Books that explain scientific facts and discoveries.">SCIENCE</a>
+    </div>
+    <div class="card">
+      <img src="./images/History1.jpg" alt="History" class="card-image" />
+      <a href="history trial.html" class="genre-link" title="Explore past events, cultures, and civilizations.">HISTORY</a>
+    </div>
+    <div class="card">
+      <img src="./images/Technology.jpg" alt="Technology" class="card-image" />
+      <a href="technology trial.html" class="genre-link" title="Stay updated on latest tech trends and innovations.">TECHNOLOGY</a>
+    </div>
+    <div class="card">
+      <img src="./images/Art.jpg" alt="Arts" class="card-image" />
+      <a href="arts.html" class="genre-link" title="Dive into painting, sculpture, music, and more.">ARTS</a>
+    </div>
+    <div class="card">
+      <img src="./images/Math1.jpg" alt="Math" class="card-image" />
+      <a href="math trial.html" class="genre-link" title="Mathematics from basic to advanced levels.">MATH</a>
+    </div>
+    <div class="card">
+      <img src="./images/Scifi.jpg" alt="Sci-Fi" class="card-image" />
+      <a href="scifi.html" class="genre-link" title="Futuristic, space and time travel stories.">SCI-FI</a>
+    </div>
+    <div class="card">
+      <img src="./images/Thriller.jpg" alt="Thriller" class="card-image" />
+      <a href="thriller.html" class="genre-link" title="Exciting, suspense-filled narratives.">THRILLER</a>
+    </div>
+    <div class="card">
+      <img src="./images/Biography.jpg" alt="Biography" class="card-image" />
+      <a href="biography.html" class="genre-link" title="Life stories of famous individuals.">BIOGRAPHY</a>
+    </div>
+    <div class="card">
+      <img src="./images/philosophy.jpg" alt="Philosophy" class="card-image" />
+      <a href="philosophy.html" class="genre-link" title="Explore ideas about existence, knowledge, values.">PHILOSOPHY</a>
+    </div>
+    <div class="card">
+      <img src="./images/psychology.jpg" alt="Psychology" class="card-image" />
+      <a href="psychology.html" class="genre-link" title="Understanding the mind and behavior.">PSYCHOLOGY</a>
+    </div>
+    <div class="card">
+      <img src="./images/action and adventure.jpg" alt ="Action and adventure" class="card-image" />
+      <a href="action and adventure.html" class="genre-link" title="Thrills. Quests. Legends. All in One Place.">ACTION & ADVENTURE</a>
+    </div>
+  </div>
+
+  <script>
+    // Toggle dark mode function
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+    }
+
+    // Animated background shapes
+    const container = document.getElementById("shapes-container");
+    const icon = "📘"; // You can change this icon
+
+    for (let i = 0; i < 30; i++) {
+      const shape = document.createElement("div");
+      shape.classList.add("shape");
+      shape.innerText = icon;
+      shape.style.left = Math.random() * 100 + "%";
+      shape.style.top = Math.random() * 100 + 50 + "%";
+      shape.style.fontSize = Math.random() * 20 + 20 + "px";
+      shape.style.animationDuration = (Math.random() * 10 + 10) + "s";
+      container.appendChild(shape);
+    }
+
+    // Search functionality for genres
+    document.getElementById("searchInput").addEventListener("input", function () {
+      const filter = this.value.toLowerCase();
+      document.querySelectorAll(".card").forEach(card => {
+        const genre = card.querySelector(".genre-link").textContent.toLowerCase();
+        card.style.display = genre.includes(filter) ? "block" : "none";
+      });
+    });
+
+    // Initialize dark mode based on existing class (if any)
+    if (document.body.classList.contains('dark-mode')) {
+        document.getElementById('toggleTheme').textContent = '💡Light';
+    } else {
+        document.getElementById('toggleTheme').textContent = '🌙Dark';
+    }
+
+    // Update toggle button text on click
+    document.getElementById("toggleTheme").addEventListener("click", function() {
+        if (document.body.classList.contains('dark-mode')) {
+            this.textContent = '💡Light';
+        } else {
+            this.textContent = '🌙Dark';
+        }
+    });
+
+  </script>
+</body>
+</html>

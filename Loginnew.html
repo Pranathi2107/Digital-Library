@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Digital Library - Login / Register</title>
+    <style>
+        /* Base Body Styles */
+        body {
+            font-family: 'Lora', serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #a2c0c7, #d0e4ea);
+            color: #222;
+            transition: background 0.3s, color 0.3s; /* For smooth dark mode transition */
+            min-height: 100vh; /* Ensure body takes full height */
+            display: flex; /* Use flexbox for overall layout */
+            flex-direction: column; /* Stack header, main content, footer vertically */
+        }
+
+        /* Floating Shapes Background (from main.html) */
+        .shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .shape {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(0, 169, 157, 0.2);
+            animation: floatShape 15s linear infinite;
+        }
+
+        @keyframes floatShape {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Header Styles (from main.html) */
+        header {
+            position: sticky; /* Sticky header stays at top */
+            top: 0;
+            z-index: 100;
+            display: flex;
+            font-size: 20px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: #00a99d;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0; /* Prevent header from shrinking */
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img.icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo h1 {
+            margin: 0;
+            font-size: 34px;
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background-color: white;
+            color: #333;
+        }
+
+        .toggle-btn {
+            background: white;
+            color: #00a99d;
+            border: none;
+            border-radius: 5px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .toggle-btn:hover {
+            background: #007f78;
+            color: white;
+        }
+
+        /* Form Wrapper to center content below header */
+        .form-wrapper {
+            flex-grow: 1; /* Allows this section to take available space */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px; /* Add some padding around the form */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+
+        /* Login/Register Form Container Styles */
+        .container {
+            background: #f3f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #008080;
+        }
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #006666;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #00b3a4;
+            box-sizing: border-box;
+        }
+        .input-group input:focus {
+            outline: none;
+            box-shadow: 0 0 8px rgba(0, 179, 164, 0.3);
+        }
+        .strength-bar {
+            height: 8px;
+            width: 100%;
+            background: #ccc;
+            border-radius: 5px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .strength-fill {
+            height: 100%;
+            width: 0;
+            background: #e74c3c;
+            transition: width 0.3s;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            color: white;
+            background: linear-gradient(135deg, #00b3a4, #008c7f);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s; /* Added for hover effect */
+        }
+        .btn:hover {
+            background: linear-gradient(135deg, #00998c, #007a6c);
+        }
+        .switch {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .switch a {
+            color: #007a6c;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .welcome-section {
+            background: #e8f8f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #00b3a4;
+        }
+        .user-info {
+            color: #008080;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .logout-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            margin-top: 10px;
+        }
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #c0392b, #a93226);
+        }
+
+        /* Footer Styles (from other pages) */
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #e3f0f3;
+            color: #555;
+            flex-shrink: 0; /* Prevent footer from shrinking */
+        }
+
+        /* Dark Mode Styles (from main.html) */
+        .dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        .dark-mode header {
+            background-color: #11b8be;
+        }
+        .dark-mode .logo h1 {
+            color: #e0e0e0;
+        }
+        .dark-mode nav a {
+            color: #e0e0e0;
+        }
+        .dark-mode nav a:hover {
+            background-color: #e0e0e0;
+            color: #121212;
+        }
+        .dark-mode .toggle-btn {
+            background-color: #e0e0e0;
+            color: #121212;
+        }
+        .dark-mode .shape {
+            color: rgba(74, 26, 232, 0.616);
+        }
+        .dark-mode .container {
+            background: #1e1e1e;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+        .dark-mode h2 {
+            color: #11b8be;
+        }
+        .dark-mode .input-group label {
+            color: #11b8be;
+        }
+        .dark-mode .input-group input {
+            background: #2a2a2a;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+        .dark-mode .input-group input:focus {
+            box-shadow: 0 0 8px rgba(17, 184, 190, 0.3);
+        }
+        .dark-mode .btn {
+            background: linear-gradient(135deg, #007f78, #005f5a);
+        }
+        .dark-mode .btn:hover {
+            background: linear-gradient(135deg, #005f5a, #003f3a);
+        }
+        .dark-mode .switch a {
+            color: #11b8be;
+        }
+        .dark-mode footer {
+            background-color: #2a2a2a;
+            color: #bbb;
+        }
+        /* Media queries for responsiveness */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px 20px;
+            }
+            nav {
+                margin-top: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .form-wrapper {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shapes" id="shapes-container"></div>
+
+    <header>
+        <div class="logo">
+            <img src="images/Library icon-Photoroom.png" class="icon" />
+            <h1>eBookNest</h1>
+        </div>
+        <nav>
+            <a href="main.html">Home</a>
+            <a href="about2.html">About</a>
+            <a href="contact trail.html">Contact Us</a>
+ <a href="reviews.html">Popular Books</a>
+
+            <a href="Loginnew.html">Login</a>
+            <button class="toggle-btn" onclick="toggleDarkMode()">🌙Dark</button>
+        </nav>
+    </header>
+
+    <div class="form-wrapper">
+        <div class="container" id="login-container">
+            <h2>Welcome to Digital Library</h2>
+            <div class="input-group">
+                <label for="login-username">Username</label>
+                <input type="text" id="login-username" placeholder="Enter your username" />
+            </div>
+            <div class="input-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" placeholder="Enter your password" />
+            </div>
+            <button class="btn" onclick="login()">Login</button>
+            <div class="switch">Don't have an account? <a onclick="showRegister()">Register here</a></div>
+        </div>
+
+        <div class="container" id="register-container" style="display:none;">
+            <h2>Create New Account</h2>
+            <div class="input-group">
+                <label for="reg-username">Choose Username</label>
+                <input type="text" id="reg-username" placeholder="Enter a username" />
+            </div>
+            <div class="input-group">
+                <label for="reg-password">Create Password</label>
+                <input type="password" id="reg-password" placeholder="Enter a password" oninput="updateStrength()" />
+                <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+            </div>
+            <div class="input-group">
+                <label for="reg-confirm-password">Confirm Password</label>
+                <input type="password" id="reg-confirm-password" placeholder="Re-enter your password" />
+            </div>
+            <button class="btn" onclick="register()">Create Account</button>
+            <div class="switch">Already have an account? <a onclick="showLogin()">Login here</a></div>
+        </div>
+    </div> <footer>
+        <p>&copy; 2025 Digital Library. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // In-memory storage for demo purposes
+        let users = {};
+        let currentUser = null; // Not strictly used for login/reg, but good for state management
+        let isLoggedIn = false; // Not strictly used for login/reg, but good for state management
+
+        // Dark mode toggle function (copied from main.html)
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+        }
+
+        // Floating shapes script (copied from main.html)
+        const shapesContainer = document.getElementById("shapes-container");
+        const icon = "📘"; // You can change this icon
+
+        for (let i = 0; i < 30; i++) {
+            const shape = document.createElement("div");
+            shape.classList.add("shape");
+            shape.innerText = icon;
+            shape.style.left = Math.random() * 100 + "%";
+            shape.style.top = Math.random() * 100 + 50 + "%";
+            shape.style.fontSize = Math.random() * 20 + 20 + "px";
+            shape.style.animationDuration = (Math.random() * 10 + 10) + "s";
+            shapesContainer.appendChild(shape);
+        }
+
+        function showLogin() {
+            document.getElementById('login-container').style.display = 'block';
+            document.getElementById('register-container').style.display = 'none';
+            clearForms();
+        }
+
+        function showRegister() {
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('register-container').style.display = 'block';
+            clearForms();
+        }
+
+        function clearForms() {
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+            document.getElementById('reg-username').value = '';
+            document.getElementById('reg-password').value = '';
+            document.getElementById('reg-confirm-password').value = '';
+            const fill = document.getElementById('strengthFill');
+            if (fill) { /* Check if element exists before accessing */
+                fill.style.width = '0%';
+                fill.style.background = '#ccc';
+            }
+        }
+
+        function updateStrength() {
+            const password = document.getElementById("reg-password").value;
+            const fill = document.getElementById("strengthFill");
+            let strength = 0;
+
+            if (password.length >= 3) strength++;
+            if (password.length >= 6) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^\w]/.test(password)) strength++;
+
+            const widths = ["0%", "20%", "40%", "60%", "80%", "100%"];
+            const colors = ["#ccc", "#e74c3c", "#f39c12", "#f1c40f", "#27ae60", "#2ecc71"];
+
+            fill.style.width = widths[strength];
+            fill.style.background = colors[strength];
+        }
+
+        function register() {
+            const username = document.getElementById("reg-username").value.trim();
+            const password = document.getElementById("reg-password").value;
+            const confirmPassword = document.getElementById("reg-confirm-password").value;
+
+            if (!username) {
+                alert("Please enter a username.");
+                return;
+            }
+
+            if (!password) {
+                alert("Please enter a password.");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match. Please try again.");
+                return;
+            }
+
+            if (users[username]) {
+                alert("Username already taken. Please choose a different username.");
+                return;
+            }
+
+            users[username] = password;
+            alert(`Account created successfully for ${username}! You can now login.`);
+            clearForms();
+            showLogin();
+        }
+
+        function login() {
+            const username = document.getElementById("login-username").value.trim();
+            const password = document.getElementById("login-password").value;
+
+            if (!username) {
+                alert("Please enter your username.");
+                return;
+            }
+            if (!password) {
+                alert("Please enter your password.");
+                return;
+            }
+            if (users[username] && users[username] === password) {
+                // Redirect to your custom dashboard page
+                window.location.href = 'dashboard.html?user=' + encodeURIComponent(username);
+            } else {
+                alert("Invalid username or password. Please try again or register if you don't have an account.");
+            }
+        }
+
+        // Allow Enter key to submit forms
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                if (document.getElementById('login-container').style.display !== 'none') {
+                    login();
+                } else if (document.getElementById('register-container').style.display !== 'none') {
+                    register();
+                }
+            }
+        });
+
+        window.onload = function() {
+            showLogin();
+        };
+    </script>
+</body>
+</html>

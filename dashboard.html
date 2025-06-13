@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard - eBookNest Digital Library</title>
+    <style>
+        /* Base Body Styles (from your existing pages) */
+        body {
+            font-family: 'Lora', serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #a2c0c7, #d0e4ea);
+            color: #222;
+            transition: background 0.3s, color 0.3s; /* For smooth dark mode transition */
+            min-height: 100vh; /* Ensure body takes full height */
+            display: flex; /* Use flexbox for overall layout */
+            flex-direction: column; /* Stack header, main content, footer vertically */
+        }
+
+        /* Floating Shapes Background (from main.html) */
+        .shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .shape {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(0, 169, 157, 0.2);
+            animation: floatShape 15s linear infinite;
+        }
+
+        @keyframes floatShape {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Header Styles (from main.html) */
+        header {
+            position: sticky; /* Sticky header stays at top */
+            top: 0;
+            z-index: 100;
+            display: flex;
+            font-size: 20px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: #00a99d;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0; /* Prevent header from shrinking */
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img.icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo h1 {
+            margin: 0;
+            font-size: 34px;
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background-color: white;
+            color: #333;
+        }
+
+        .toggle-btn {
+            background: white;
+            color: #00a99d;
+            border: none;
+            border-radius: 5px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .toggle-btn:hover {
+            background: #007f78;
+            color: white;
+        }
+
+        /* Main Content Area - Dashboard Specific */
+        main {
+            flex-grow: 1; /* Allows main content to take available space */
+            padding: 40px 20px;
+            max-width: 1200px; /* Still allows for a wider content area if desired */
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column; /* Changed to column to stack vertically */
+            justify-content: center; /* Centers content horizontally within the flex container */
+            align-items: center; /* Centers items vertically when stacked */
+            gap: 30px; /* Space between cards */
+        }
+
+        /* New Welcome Message Styles */
+        .dashboard-title {
+            font-size: 3em; /* Larger title */
+            color: #008080; /* Consistent color with other main headings */
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-message {
+            font-size: 1.4em;
+            color: #444;
+            text-align: center;
+            margin-bottom: 40px; /* Space before sections start */
+        }
+
+        #dashboard-username {
+            font-weight: bold;
+            color: #00a99d; /* Highlight the username */
+        }
+
+        /* Dashboard Section Cards - Unified Max Width */
+        .dashboard-section,
+        .feedback-summary-section, /* Apply same max-width to feedback sections */
+        .previous-feedback-section { /* Apply same max-width to previous feedback section */
+            background-color: #f3f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            line-height: 1.6;
+            text-align: center; /* Center content within each card */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between; /* Push button to bottom */
+            flex: 0 0 auto; /* Prevent cards from growing/shrink excessively */
+            width: 100%; /* Take full width of parent (main) */
+            max-width: 450px; /* Unified max width for all relevant sections */
+        }
+
+        .dashboard-section h2,
+        .feedback-summary-section h2,
+        .previous-feedback-section h2 { /* Apply styles to all section headings */
+            font-size: 2em; /* Adjusted to match dashboard-section h2 */
+            margin-bottom: 20px; /* Adjusted to match dashboard-section h2 */
+            color: #008080;
+            text-shadow: 1px 1px 2px #ddd;
+        }
+        /* Specific override for previous feedback h2 border */
+        .previous-feedback-section h2 {
+            border-bottom: 2px solid #00a99d; /* Horizontal line under title */
+            padding-bottom: 10px;
+        }
+
+        .dashboard-section p,
+        .feedback-summary-section p,
+        .previous-feedback-section p { /* Apply styles to all section paragraphs */
+            font-size: 1.1em;
+            color: #555;
+            margin-bottom: 25px; /* Adjusted to match dashboard-section p */
+            flex-grow: 1; /* Allow paragraph to take available space */
+        }
+
+        .dashboard-section .explore-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #00b3a4, #008c7f);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-section .explore-btn:hover {
+            background: linear-gradient(135deg, #00998c, #007a6c);
+            transform: translateY(-2px);
+        }
+
+        /* Embedded Feedback Form Styles */
+        .feedback-form {
+            width: 100%;
+            max-width: 500px; /* Limit form width - kept slightly larger than section max-width to allow form elements to fill */
+            text-align: left; /* Align form labels/inputs left */
+        }
+
+        .feedback-form label {
+            display: block; /* Each label on its own line */
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .feedback-form input[type="text"],
+        .feedback-form input[type="email"],
+        .feedback-form textarea {
+            width: calc(100% - 20px); /* Full width minus padding */
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 1em;
+        }
+
+        .feedback-form textarea {
+            resize: vertical; /* Allow vertical resizing */
+            min-height: 100px; /* Minimum height for textarea */
+        }
+
+        .feedback-form button[type="submit"] {
+            display: block; /* Make button full width of form */
+            width: 100%;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #00b3a4, #008c7f);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .feedback-form button[type="submit"]:hover {
+            background: linear-gradient(135deg, #00998c, #007a6c);
+            transform: translateY(-2px);
+        }
+
+        /* Feedback Confirmation Message */
+        .feedback-message {
+            margin-top: 15px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.1em;
+            display: none; /* Hidden by default */
+            max-width: 500px; /* Match form width */
+            text-align: center;
+        }
+
+        .feedback-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .feedback-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left; /* Align list items left */
+            width: 100%; /* Ensure list takes full width of its parent section */
+        }
+
+        .feedback-item {
+            background-color: #eaf6f8;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #d0e4ea;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            position: relative; /* Needed for absolute positioning of delete button */
+        }
+
+        .feedback-item p {
+            margin: 5px 0;
+            color: #333;
+        }
+
+        .feedback-item .feedback-meta {
+            font-size: 0.9em;
+            color: #777;
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .no-feedback-message {
+            font-style: italic;
+            color: #777;
+            margin-top: 20px;
+        }
+
+        /* Delete button style */
+        .delete-feedback-btn {
+            background-color: #dc3545; /* Red color */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            position: absolute; /* Position relative to .feedback-item */
+            top: 10px;
+            right: 10px;
+            opacity: 0.8; /* Slightly transparent by default */
+        }
+
+        .delete-feedback-btn:hover {
+            background-color: #c82333; /* Darker red on hover */
+            opacity: 1;
+        }
+
+
+        /* Footer Styles (from other pages) */
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #e3f0f3;
+            color: #555;
+            flex-shrink: 0;
+        }
+
+        /* Dark Mode Styles */
+        .dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        .dark-mode header {
+            background-color: #11b8be;
+        }
+        .dark-mode .logo h1 {
+            color: #e0e0e0;
+        }
+        .dark-mode nav a {
+            color: #e0e0e0;
+        }
+        .dark-mode nav a:hover {
+            background-color: #e0e0e0;
+            color: #121212;
+        }
+        .dark-mode .toggle-btn {
+            background-color: #e0e0e0;
+            color: #121212;
+        }
+        .dark-mode .shape {
+            color: rgba(74, 26, 232, 0.616);
+        }
+        .dark-mode main {
+            background-color: #121212; /* General main background for consistency */
+            box-shadow: none; /* Remove main shadow as sections have their own */
+        }
+        .dark-mode .dashboard-title {
+            color: #11b8be;
+            text-shadow: none;
+        }
+        .dark-mode .welcome-message {
+            color: #ccc;
+        }
+        .dark-mode #dashboard-username {
+            color: #11b8be;
+        }
+        .dark-mode .dashboard-section,
+        .dark-mode .feedback-summary-section,
+        .dark-mode .previous-feedback-section { /* Apply dark mode to all sections */
+            background-color: #1e1e1e;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        .dark-mode .dashboard-section h2,
+        .dark-mode .feedback-summary-section h2,
+        .dark-mode .previous-feedback-section h2 { /* Apply to all section headings */
+            color: #11b8be;
+            text-shadow: none;
+            border-bottom-color: #11b8be; /* Dark mode border color */
+        }
+        .dark-mode .dashboard-section p,
+        .dark-mode .feedback-summary-section p,
+        .dark-mode .previous-feedback-section p { /* Apply to all section paragraphs */
+            color: #bbb;
+        }
+        .dark-mode .dashboard-section .explore-btn {
+            background: linear-gradient(135deg, #007f78, #005f5a);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        .dark-mode .dashboard-section .explore-btn:hover {
+            background: linear-gradient(135deg, #005f5a, #003f3a);
+        }
+        .dark-mode .feedback-form label {
+            color: #e0e0e0;
+        }
+        .dark-mode .feedback-form input[type="text"],
+        .dark-mode .feedback-form input[type="email"],
+        .dark-mode .feedback-form textarea {
+            background-color: #333;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+        .dark-mode .feedback-form button[type="submit"] {
+            background: linear-gradient(135deg, #007f78, #005f5a);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        .dark-mode .feedback-form button[type="submit"]:hover {
+            background: linear-gradient(135deg, #005f5a, #003f3a);
+        }
+        .dark-mode footer {
+            background-color: #2a2a2a;
+            color: #bbb;
+        }
+
+        /* Dark Mode for feedback message */
+        .dark-mode .feedback-message.success {
+            background-color: #0a4200; /* Darker green for dark mode */
+            color: #c3e6cb;
+            border-color: #002e00;
+        }
+        .dark-mode .feedback-message.error {
+            background-color: #5a0000; /* Darker red for dark mode */
+            color: #f5c6cb;
+            border-color: #3d0000;
+        }
+        .dark-mode .feedback-item {
+            background-color: #2a2a2a; /* Darker background for feedback items */
+            border-color: #444;
+        }
+        .dark-mode .feedback-item p {
+            color: #e0e0e0;
+        }
+        .dark-mode .feedback-item .feedback-meta {
+            color: #aaa;
+        }
+        .dark-mode .no-feedback-message {
+            color: #aaa;
+        }
+        .dark-mode .delete-feedback-btn {
+            background-color: #a00000; /* Darker red for dark mode */
+        }
+        .dark-mode .delete-feedback-btn:hover {
+            background-color: #700000;
+        }
+
+
+        /* Media queries for responsiveness */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px 20px;
+            }
+            nav {
+                margin-top: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            main {
+                padding: 20px 15px;
+                margin: 15px auto;
+                flex-direction: column; /* Ensure vertical stack on small screens too */
+                align-items: center; /* Center items when stacked */
+            }
+            .dashboard-title {
+                font-size: 2.2em;
+            }
+            .welcome-message {
+                font-size: 1.2em;
+            }
+            .dashboard-section,
+            .feedback-summary-section,
+            .previous-feedback-section { /* Apply to all relevant sections */
+                max-width: 100%; /* Allow sections to take full width on small screens */
+            }
+            .dashboard-section h2,
+            .feedback-summary-section h2,
+            .previous-feedback-section h2 {
+                font-size: 1.8em;
+            }
+            .feedback-form input[type="text"],
+            .feedback-form input[type="email"],
+            .feedback-form textarea,
+            .feedback-form button[type="submit"] {
+                width: calc(100% - 20px); /* Adjust width for smaller screens */
+            }
+            .delete-feedback-btn {
+                padding: 3px 8px; /* Smaller padding for mobile */
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="shapes" id="shapes-container"></div>
+
+    <header>
+        <div class="logo">
+            <img src="images/Library icon-Photoroom.png" class="icon" alt="eBookNest Logo" />
+            <h1>eBookNest</h1>
+        </div>
+        <nav>
+            <a href="main.html">Home</a>
+            <a href="about2.html">About</a>
+            <a href="contact trail.html">Contact Us</a>
+            <a href="Loginnew.html">Login</a>
+            <button class="toggle-btn" onclick="toggleDarkMode()">🌙Dark</button>
+        </nav>
+    </header>
+
+    <main>
+        <h1 class="dashboard-title">Welcome to Your Dashboard!</h1>
+        <p class="welcome-message">
+            Hello, <span id="dashboard-username">Guest</span>! Explore your personalized digital library.
+        </p>
+
+        <section class="dashboard-section" aria-labelledby="categoriesHeading">
+            <h2 id="categoriesHeading">Browse Categories</h2>
+            <p>Dive into our vast collection of eBooks, organized by genre, topic, and interest. Find your next favorite read effortlessly!</p>
+            <a href="home trial.html" class="explore-btn">Explore Now</a>
+        </section>
+
+        <section class="dashboard-section" aria-labelledby="newsHeading">
+            <h2 id="newsHeading">Latest News</h2>
+            <p>Stay updated with the newest additions to our library, upcoming author events, and important announcements from eBookNest.</p>
+            <a href="news.html" class="explore-btn">Explore Now</a>
+        </section>
+
+        <section class="dashboard-section" aria-labelledby="articlesHeading">
+            <h2 id="articlesHeading">Featured Articles</h2>
+            <p>Read insightful articles, author spotlights, and guides on reading, writing, and the digital book world.</p>
+            <a href="articles.html" class="explore-btn">Explore Now</a>
+        </section>
+
+        <section class="feedback-summary-section" aria-labelledby="feedbackSummaryHeading">
+            <h2 id="feedbackSummaryHeading">Quick Feedback</h2>
+            <p>Have a suggestion or found an issue? Let us know!</p>
+            <form class="feedback-form" onsubmit="submitFeedback(event)">
+                <label for="name">Your Name:</label>
+                <input type="text" id="name" name="name" required  placeholder="Name">
+
+                <label for="email">Your Email:</label>
+                <input type="email" id="email" name="email"  required placeholder="you@example.com">
+
+                <label for="suggestion">Your Suggestion / Feedback:</label>
+                <textarea id="suggestion" name="suggestion" rows="5" required placeholder="Tell us how we can improve..."></textarea>
+
+                <button type="submit">Submit Feedback</button>
+            </form>
+            <div id="feedbackMessage" class="feedback-message"></div>
+            <p style="margin-top: 20px;">
+            </p>
+        </section>
+
+        <section class="previous-feedback-section" aria-labelledby="previousFeedbackHeading">
+            <h2 id="previousFeedbackHeading">Your Previous Feedback</h2>
+            <ul id="feedbackList" class="feedback-list">
+                </ul>
+            <p id="noFeedbackMessage" class="no-feedback-message">No feedback submitted yet.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 eBookNest Digital Library. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // --- Core Website Scripts ---
+
+        // Dark mode toggle function
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+            // Optionally, save dark mode preference to localStorage
+            if (document.body.classList.contains("dark-mode")) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        }
+
+        // Floating shapes script
+        const shapesContainer = document.getElementById("shapes-container");
+        const icon = "📚"; // Define the icon for the floating shapes
+
+        // Loop to create multiple floating shapes
+        for (let i = 0; i < 30; i++) {
+            const shape = document.createElement("div");
+            shape.classList.add("shape");
+            shape.innerText = icon; // Set the icon as the text content
+            shape.style.left = Math.random() * 100 + "%"; // Random horizontal position
+            shape.style.top = Math.random() * 100 + 50 + "%"; // Random vertical position (starts off-screen)
+            shape.style.fontSize = Math.random() * 20 + 20 + "px"; // Random font size
+            shape.style.animationDuration = (Math.random() * 10 + 10) + "s"; // Random animation duration
+            shapesContainer.appendChild(shape); // Add the shape to the container
+        }
+
+        // Function to render previous feedback from local storage
+        function displayPreviousFeedback() {
+            const feedbackList = document.getElementById('feedbackList');
+            const noFeedbackMessage = document.getElementById('noFeedbackMessage');
+            let allFeedback = JSON.parse(localStorage.getItem('userFeedback')) || []; // Retrieve feedback from local storage
+
+            feedbackList.innerHTML = ''; // Clear existing list items before re-rendering
+
+            if (allFeedback.length === 0) {
+                noFeedbackMessage.style.display = 'block'; // Show "No feedback" message if no feedback exists
+            } else {
+                noFeedbackMessage.style.display = 'none'; // Hide "No feedback" message
+                // Display feedback in reverse chronological order (newest first)
+                allFeedback.reverse().forEach((feedback, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('feedback-item');
+
+                    const nameDisplay = feedback.name ? `<strong>Name:</strong> ${feedback.name}<br>` : ''; // Display name if available
+                    const emailDisplay = feedback.email ? `<strong>Email:</strong> ${feedback.email}<br>` : ''; // Display email if available
+
+                    // Add a delete button to each feedback item
+                    listItem.innerHTML = `
+                        <p>${nameDisplay}${emailDisplay}<strong>Feedback:</strong> ${feedback.suggestion}</p>
+                        <p class="feedback-meta">Submitted on: ${feedback.timestamp}</p>
+                        <button class="delete-feedback-btn" data-index="${index}" title="Delete this feedback">Delete</button>
+                    `;
+                    feedbackList.appendChild(listItem); // Append the feedback item to the list
+                });
+
+                // Add event listeners to delete buttons after they are created
+                document.querySelectorAll('.delete-feedback-btn').forEach(button => {
+                    button.addEventListener('click', deleteFeedback); // Attach click event listener for deletion
+                });
+            }
+        }
+
+        // Function to delete feedback
+        function deleteFeedback(event) {
+            const clickedIndex = parseInt(event.target.dataset.index); // Get the index of the clicked delete button
+
+            // Get the original feedback array (not reversed) to correctly identify the item to delete
+            let originalFeedback = JSON.parse(localStorage.getItem('userFeedback')) || [];
+
+            // Calculate the actual original index since the displayed list is reversed
+            const actualOriginalIndex = originalFeedback.length - 1 - clickedIndex;
+
+            if (confirm("Are you sure you want to delete this feedback?")) { // Confirmation dialog
+                if (actualOriginalIndex >= 0 && actualOriginalIndex < originalFeedback.length) {
+                    originalFeedback.splice(actualOriginalIndex, 1); // Remove 1 item at the calculated index
+                    localStorage.setItem('userFeedback', JSON.stringify(originalFeedback)); // Save updated array to local storage
+                    displayPreviousFeedback(); // Re-render the list to reflect the deletion
+                    // Optional: show a message that feedback was deleted (not implemented here but could be added)
+                }
+            }
+        }
+
+
+        // Function to handle feedback submission to local storage
+        function submitFeedback(event) {
+            event.preventDefault(); // Prevent the default form submission (page reload)
+
+            const name = document.getElementById('name').value.trim(); // Get name and trim whitespace
+            const email = document.getElementById('email').value.trim(); // Get email and trim whitespace
+            const suggestion = document.getElementById('suggestion').value.trim(); // Get suggestion and trim whitespace
+
+            const feedbackMessageDiv = document.getElementById('feedbackMessage');
+            feedbackMessageDiv.style.display = 'none'; // Hide previous messages
+            feedbackMessageDiv.classList.remove('success', 'error'); // Clear previous success/error classes
+
+            // Basic validation: ensure suggestion is not empty
+            if (suggestion === '') {
+                feedbackMessageDiv.classList.add('error');
+                feedbackMessageDiv.textContent = 'Please enter your suggestion or feedback.';
+                feedbackMessageDiv.style.display = 'block';
+                return; // Stop the function if validation fails
+            }
+
+            // Basic email validation (optional, can be more robust with regex)
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email !== '' && !emailRegex.test(email)) {
+                feedbackMessageDiv.classList.add('error');
+                feedbackMessageDiv.textContent = 'Please enter a valid email address, or leave it blank.';
+                feedbackMessageDiv.style.display = 'block';
+                return;
+            }
+
+            // Create a feedback object
+            const feedback = {
+                name: name === '' ? 'Anonymous' : name, // Use 'Anonymous' if name is empty
+                email: email,
+                suggestion: suggestion,
+                timestamp: new Date().toLocaleString() // Add a timestamp for when feedback was submitted
+            };
+
+            try {
+                // Retrieve existing feedback from local storage, or initialize an empty array
+                let allFeedback = JSON.parse(localStorage.getItem('userFeedback')) || [];
+
+                // Add the new feedback to the array
+                allFeedback.push(feedback);
+
+                // Save the updated array back to local storage
+                localStorage.setItem('userFeedback', JSON.stringify(allFeedback));
+
+                // Provide user feedback (success message)
+                feedbackMessageDiv.classList.add('success');
+                feedbackMessageDiv.textContent = 'Thank you for your feedback! It has been saved locally in your browser.';
+                feedbackMessageDiv.style.display = 'block';
+
+                // Optional: Clear the form fields after successful submission
+                document.getElementById('name').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('suggestion').value = '';
+
+                // Refresh the displayed previous feedback
+                displayPreviousFeedback();
+
+                // Optionally hide the message after a few seconds
+                setTimeout(() => {
+                    feedbackMessageDiv.style.display = 'none';
+                }, 5000); // Message disappears after 5 seconds
+
+            } catch (e) {
+                console.error('Error saving feedback to local storage:', e);
+                feedbackMessageDiv.classList.add('error');
+                feedbackMessageDiv.textContent = 'An error occurred while saving your feedback. Please try again.';
+                feedbackMessageDiv.style.display = 'block';
+            }
+        }
+
+        // Initial setup on page load
+        window.onload = function() {
+            // Apply dark mode if previously enabled (checks localStorage)
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+            }
+
+            // Load and display previous feedback when the page loads
+            displayPreviousFeedback();
+
+            // Set username from local storage if available (Example: assuming username is saved from a login page)
+            const storedUsername = localStorage.getItem('loggedInUsername'); // Assuming you save username here
+            if (storedUsername) {
+                document.getElementById('dashboard-username').textContent = storedUsername;
+            }
+        };
+    </script>
+</body>
+</html>

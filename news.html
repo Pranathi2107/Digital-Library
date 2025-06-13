@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Newspapers - eBookNest Digital Library</title>
+    <style>
+        /* Base Body Styles (from your existing pages) */
+        body {
+            font-family: 'Lora', serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #a2c0c7, #d0e4ea);
+            color: #222;
+            transition: background 0.3s, color 0.3s;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Floating Shapes Background (from your existing pages) */
+        .shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .shape {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(0, 169, 157, 0.2);
+            animation: floatShape 15s linear infinite;
+        }
+
+        @keyframes floatShape {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Header Styles (from your existing pages) */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            font-size: 20px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: #00a99d;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img.icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo h1 {
+            margin: 0;
+            font-size: 34px;
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background-color: white;
+            color: #333;
+        }
+
+        .toggle-btn {
+            background: white;
+            color: #00a99d;
+            border: none;
+            border-radius: 5px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .toggle-btn:hover {
+            background: #007f78;
+            color: white;
+        }
+
+        /* Main Content Area */
+        main {
+            flex-grow: 1;
+            padding: 40px 20px;
+            max-width: 1100px; /* Increased max-width for more horizontal space */
+            margin: 20px auto;
+            background-color: #f3f9fa; /* Consistent background with other sections */
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            line-height: 1.6;
+        }
+
+        /* Newspaper List Specific Styles */
+        h1.page-title {
+            text-align: center;
+            color: #008080;
+            font-size: 2.8em;
+            margin-bottom: 40px;
+            text-shadow: 1px 1px 2px #ddd;
+        }
+
+        .newspaper-section h2 {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            color: #00a99d;
+            font-size: 1.8em;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+            text-align: left;
+        }
+
+        ul {
+            max-width: none;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        li {
+            background: #fff;
+            padding: 20px 25px; /* Increased padding for a larger box */
+            border-radius: 10px; /* Slightly more rounded corners */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Stronger initial shadow */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            
+            /* Centering the content inside the LI */
+            display: flex;
+            align-items: center; /* Vertically center content */
+            justify-content: center; /* Horizontally center content */
+            text-align: center; /* Fallback for text alignment, but flex will handle it */
+            
+            min-height: 100px; /* Minimum height for the boxes */
+        }
+
+        li:hover {
+            transform: translateY(-5px); /* More pronounced lift effect */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* Stronger shadow on hover */
+        }
+
+        li a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold; /* Keep bold for newspaper names */
+            font-size: 1.2em; /* Slightly larger font size */
+            
+            /* Make the entire li area clickable and center its text */
+            display: flex; /* Use flex for the anchor to center its content */
+            align-items: center; /* Vertically center the text within the link */
+            justify-content: center; /* Horizontally center the text within the link */
+            width: 100%; /* Take full width of the li */
+            height: 100%; /* Take full height of the li */
+        }
+
+        li a:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+
+        /* Footer Styles (from your existing pages) */
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #e3f0f3;
+            color: #555;
+            flex-shrink: 0;
+        }
+
+        /* Dark Mode Styles */
+        .dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        .dark-mode header {
+            background-color: #11b8be;
+        }
+        .dark-mode .logo h1 {
+            color: #e0e0e0;
+        }
+        .dark-mode nav a {
+            color: #e0e0e0;
+        }
+        .dark-mode nav a:hover {
+            background-color: #e0e0e0;
+            color: #121212;
+        }
+        .dark-mode .toggle-btn {
+            background-color: #e0e0e0;
+            color: #121212;
+        }
+        .dark-mode .shape {
+            color: rgba(74, 26, 232, 0.616);
+        }
+        .dark-mode main {
+            background-color: #1e1e1e;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        .dark-mode .newspaper-section h2 {
+            color: #11b8be;
+            border-bottom-color: #444;
+        }
+        .dark-mode h1.page-title {
+            color: #11b8be;
+            text-shadow: none;
+        }
+        .dark-mode li {
+            background-color: #2a2a2a;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .dark-mode li:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .dark-mode li a {
+            color: #4db8ff;
+        }
+        .dark-mode li a:hover {
+            color: #1a9cff;
+        }
+        .dark-mode footer {
+            background-color: #2a2a2a;
+            color: #bbb;
+        }
+
+        /* Media queries for responsiveness */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px 20px;
+            }
+            nav {
+                margin-top: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            main {
+                padding: 20px 15px;
+                margin: 15px auto;
+                max-width: 100%; /* Allow main to take full width on small screens */
+            }
+            h1.page-title {
+                font-size: 2.2em;
+            }
+            .newspaper-section h2 {
+                font-size: 1.6em;
+            }
+            ul {
+                grid-template-columns: 1fr; /* Stack on small screens */
+            }
+            li {
+                min-height: 80px; /* Slightly smaller height on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shapes" id="shapes-container"></div>
+
+    <header>
+        <div class="logo">
+            <img src="images/Library icon-Photoroom.png" class="icon" alt="eBookNest Logo" />
+            <h1>eBookNest</h1>
+        </div>
+        <nav>
+            <a href="main.html">Home</a>
+            <a href="about2.html">About</a>
+            <a href="contact trail.html">Contact Us</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="Loginnew.html">Login</a>            <button class="toggle-btn" onclick="toggleDarkMode()">🌙Dark</button>
+        </nav>
+    </header>
+
+    <main>
+        <h1 class="page-title">Major Newspapers</h1>
+
+        <div class="newspaper-section">
+            <h2>Local News</h2>
+            <ul>
+                <li><a href="https://www.timesofindia.com/" target="_blank">Times of India</a></li>
+                <li><a href="https://www.jagran.com/" target="_blank">Dainik Jagran</a></li>
+                <li><a href="https://www.newindianexpress.com/" target="_blank">The New Indian Express</a></li>
+                <li><a href="https://www.hindustantimes.com/" target="_blank">Hindustan Times</a></li>
+                <li><a href="https://www.indiatoday.in/" target="_blank">India Today</a></li>
+                <li><a href="https://www.thenewsminute.com/" target="_blank">The News Minute</a></li>
+            </ul>
+        </div>
+
+        <div class="newspaper-section">
+            <h2>International News</h2>
+            <ul>
+                <li><a href="https://edition.cnn.com/" target="_blank">CNN</a></li>
+                <li><a href="https://www.bbc.com/news" target="_blank">BBC News</a></li>
+                <li><a href="https://www.nytimes.com/" target="_blank">The New York Times</a></li>
+                <li><a href="https://www.reuters.com/" target="_blank">Reuters</a></li>
+                <li><a href="https://www.foxnews.com/" target="_blank">Fox News</a></li>
+                <li><a href="https://www.aljazeera.com/" target="_blank">Al Jazeera</a></li>
+                <li><a href="https://www.theguardian.com/international" target="_blank">The Guardian</a></li>
+                <li><a href="https://www.cnbc.com/" target="_blank">CNBC</a></li>
+                <li><a href="https://www.bloomberg.com/" target="_blank">Bloomberg</a></li>
+                <li><a href="https://apnews.com/" target="_blank">Associated Press</a></li>
+                <li><a href="https://www.wsj.com/" target="_blank">The Wall Street Journal</a></li>
+                <li><a href="https://www.euronews.com/" target="_blank">Euronews</a></li>
+                <li><a href="https://www.france24.com/en/" target="_blank">France 24</a></li>
+                <li><a href="https://www.dw.com/en/" target="_blank">Deutsche Welle</a></li>
+            </ul>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 eBookNest Digital Library. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // --- Core Website Scripts ---
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+            // Save dark mode preference to localStorage
+            if (document.body.classList.contains("dark-mode")) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        }
+
+        const shapesContainer = document.getElementById("shapes-container");
+        const icon = "📚"; // Changed to book icon for eBookNest
+
+        for (let i = 0; i < 30; i++) {
+            const shape = document.createElement("div");
+            shape.classList.add("shape");
+            shape.innerText = icon;
+            shape.style.left = Math.random() * 100 + "%";
+            shape.style.top = Math.random() * 100 + 50 + "%";
+            shape.style.fontSize = Math.random() * 20 + 20 + "px";
+            shape.style.animationDuration = (Math.random() * 10 + 10) + "s";
+            shapesContainer.appendChild(shape);
+        }
+
+        window.onload = function() {
+            // Dark mode preference loading
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                 document.body.classList.add('dark-mode');
+            }
+        };
+    </script>
+</body>
+</html>

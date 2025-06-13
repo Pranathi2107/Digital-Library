@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Psychology Books</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+   body {
+      font-family: lora;
+      background-color: #f8f9fa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #23bfb2d6;
+      color: white;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .book-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .book-card {
+      background: #ecf0f1;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+
+    .book-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .book-card h3 {
+      margin-bottom: 0.5rem;
+      color: #2c3e50;
+    }
+
+    .book-card p {
+      margin: 0.3rem 0;
+      font-size: 0.95rem;
+    }
+
+    .btn {
+      margin-top: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: #2980b9;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      overflow: auto;
+    }
+
+    .modal-content {
+      background-color: #ffffff;
+      margin: 3% auto;
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 900px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 35px;
+      font-weight: bold;
+      color: #aaa;
+      cursor: pointer;
+    }
+
+    .reader-header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .reader-header p {
+      color: #666;
+    }
+
+    .reader-controls {
+      display: flex;
+      justify-content: flex-end;
+      margin: 1rem 0;
+    }
+
+    .reader-controls .btn {
+      background: #2ecc71;
+    }
+
+    .book-content {
+      overflow-y: auto;
+      padding: 1rem;
+      background: #f4f4f4;
+      border-radius: 8px;
+      margin-top: 1rem;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .book-link-container {
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .book-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.5rem;
+      background: #27ae60;
+      color: white;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .book-link-btn:hover {
+      background: #219653;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .modal, .modal * {
+        visibility: visible;
+      }
+      .modal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: auto;
+        background: white;
+        padding: 0;
+        margin: 0;
+      }
+      .modal-content {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 20px;
+        box-shadow: none;
+        border-radius: 0;
+        max-height: none;
+      }
+      .close, .reader-controls, .reader-header p, .book-link-container {
+        display: none;
+      }
+      .reader-header h2 {
+        font-size: 24pt;
+        text-align: center;
+      }
+      .book-content {
+        height: auto;
+        overflow: visible;
+        padding: 0;
+        background: none;
+      }
+      .book-content p {
+        font-size: 12pt;
+        margin-bottom: 12pt;
+      }
+    }
+     .controls {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      #searchBar {
+        width: 90%;
+      }
+       #toggleTheme:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+     body.dark-mode {
+      background-color: #121212;
+      color: var(--text-light);
+      --light: #1e1e1e;
+      --dark: #f0f0f0;
+      --text: #e0e0e0;
+    }
+.controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1rem 0;
+      width: 100%;
+    }
+
+    #searchBar {
+      padding: 0.8rem 1.2rem;
+      border: none;
+      border-radius: 50px;
+      width: 60%;
+      max-width: 500px;
+      font-size: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    #searchBar:focus {
+      outline: none;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+      transform: translateY(-2px);
+    }
+
+    #toggleTheme {
+      background: var(--secondary);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #toggleTheme:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Psychology Books</h1>
+    <div class="controls">
+      <input type="text" id="searchBar" placeholder="Search books by title or author...">
+      <button id="toggleTheme">
+        <span>🌙/☀️</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="book-list" id="bookList"></div>
+  </div>
+
+  <!-- Book Reader Modal -->
+  <div id="bookModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div class="reader-header">
+        <h2 id="modalTitle">Book Title</h2>
+        <p id="modalAuthor">Author Name</p>
+      </div>
+      <div class="reader-controls">
+        <button id="printBook" class="btn">
+          <i class="fas fa-print"></i> Print Book
+        </button>
+      </div>
+      <div class="book-content" id="bookContent"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p><center>Psychology Book Library &copy; 2025 | Understanding the Human Mind</center></p>
+  </footer>
+
+  <script>
+    const books = [
+      {
+        id: "man-search-meaning",
+        title: "Man's Search for Meaning",
+        author: "Viktor Frankl",
+        year: 1946,
+        info: "A psychiatrist's Holocaust experiences and logotherapy",
+        link: "https://www.gutenberg.org/ebooks/15489", // Biography link
+        content: `
+          <h3>Part One: Experiences in a Concentration Camp</h3>
+          <p>This book does not claim to be an account of facts and events but of personal experiences, experiences which millions of prisoners have suffered time and again. It is the inside story of a concentration camp, told by one of its survivors.</p>
+          
+          <h3>Part Two: Logotherapy in a Nutshell</h3>
+          <p>Logotherapy focuses on the meaning of human existence as well as on man's search for such a meaning. According to logotherapy, the striving to find a meaning in one's life is the primary motivational force in man.</p>
+        `
+      },
+      {
+        id: "thinking-fast-slow",
+        title: "Thinking, Fast and Slow",
+        author: "Daniel Kahneman",
+        year: 2011,
+        info: "Groundbreaking insights into human cognition and decision-making",
+        link: "https://www.gutenberg.org/ebooks/author/35830", // Biography link
+        content: `
+          <h3>Chapter 1: The Characters of the Story</h3>
+          <p>To observe your mind in automatic mode, glance at the image below. Your experience as you look at the woman's face seamlessly combines what we normally call seeing and intuitive thinking.</p>
+          
+          <h3>Chapter 5: Cognitive Ease</h3>
+          <p>Familiar ideas are processed more fluently, and the experience of cognitive ease comes with a family of related impressions. When you feel strained, you are more likely to be vigilant and suspicious.</p>
+        `
+      },
+      {
+        id: "influence-psychology",
+        title: "Influence: The Psychology of Persuasion",
+        author: "Robert Cialdini",
+        year: 1984,
+        info: "The science behind why people say 'yes' and how to apply it",
+        link: "https://www.gutenberg.org/ebooks/author/35830", // Biography link
+        content: `
+          <h3>Chapter 1: Weapons of Influence</h3>
+          <p>Certain animals are born with programmed reactions to specific stimuli. The power of these weapons resides in their ability to produce a kind of automatic, mindless compliance from people.</p>
+          
+          <h3>Chapter 2: Reciprocation</h3>
+          <p>The rule of reciprocation says that we should try to repay what another person has provided us. The rule is so strong it can overpower other factors that normally influence compliance.</p>
+        `
+      },
+      {
+        id: "emotional-intelligence",
+        title: "Emotional Intelligence",
+        author: "Daniel Goleman",
+        year: 1995,
+        info: "Why EQ matters more than IQ for success in life",
+        link: "https://www.gutenberg.org/ebooks/author/35830", // Biography link
+        content: `
+          <h3>Chapter 1: What Are Emotions For?</h3>
+          <p>All emotions are impulses to act, the instant plans for handling life that evolution has instilled in us. The root of the word emotion is motere, the Latin verb "to move."</p>
+          
+          <h3>Chapter 4: Know Thyself</h3>
+          <p>Self-awareness—recognizing a feeling as it happens—is the keystone of emotional intelligence. The ability to monitor feelings from moment to moment is crucial to psychological insight.</p>
+        `
+      },
+      {
+        id: "power-habit",
+        title: "The Power of Habit",
+        author: "Charles Duhigg",
+        year: 2012,
+        info: "Understanding how habits work and how to transform them",
+        link: "https://www.gutenberg.org/ebooks/author/35830", // Biography link
+        content: `
+          <h3>Chapter 1: The Habit Loop</h3>
+          <p>Habits emerge because the brain is constantly looking for ways to save effort. This process within our brains is a three-step loop: cue, routine, and reward.</p>
+          
+          <h3>Chapter 3: The Golden Rule of Habit Change</h3>
+          <p>You can't extinguish a bad habit, you can only change it. The Golden Rule of habit change says that the most effective way to shift a habit is to diagnose and retain the old cue and reward.</p>
+        `
+      },
+      {
+        id: "mindset",
+        title: "Mindset: The New Psychology of Success",
+        author: "Carol Dweck",
+        year: 2006,
+        info: "How our beliefs about our abilities shape our success",
+        link: "https://www.gutenberg.org/ebooks/author/35830", // Biography link
+        content: `
+          <h3>Chapter 1: The Mindsets</h3>
+          <p>For twenty years, my research has shown that the view you adopt for yourself profoundly affects the way you lead your life. It can determine whether you become the person you want to be.</p>
+          
+          <h3>Chapter 3: The Truth About Ability and Accomplishment</h3>
+          <p>Fixed-mindset thinkers believe intelligence is static. Growth-mindset thinkers believe intelligence can be developed. These beliefs create different psychological worlds.</p>
+        `
+      },
+      {
+        id: "quiet-power",
+        title: "Quiet: The Power of Introverts",
+        author: "Susan Cain",
+        year: 2012,
+        info: "The undervalued strengths of introverts in an extroverted world",
+        link: "https://www.gutenberg.org/ebooks/author/35830", // Biography link
+        content: `
+          <h3>Chapter 1: The Rise of the "Mighty Likeable Fellow"</h3>
+          <p>America had shifted from what the cultural historian Warren Susman called a Culture of Character to a Culture of Personality—and opened up a Pandora's Box of personal anxieties.</p>
+          
+          <h3>Chapter 4: Is Temperament Destiny?</h3>
+          <p>High-reactive kids who enjoy good parenting, child care, and a stable home environment tend to have fewer emotional problems and more social skills than their lower-reactive peers.</p>
+        `
+      }
+    ];
+const searchBar = document.getElementById('searchBar');
+    const toggleTheme = document.getElementById('toggleTheme');
+    const bookList = document.getElementById('bookList');
+    const bookModal = document.getElementById('bookModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalAuthor = document.getElementById('modalAuthor');
+    const bookContent = document.getElementById('bookContent');
+    const closeModal = document.querySelector('.close');
+    const printBook = document.getElementById('printBook');
+
+    function initLibrary() {
+      books.forEach(book => {
+        const bookCard = document.createElement('div');
+        bookCard.className = 'book-card';
+        bookCard.innerHTML = `
+          <div class="book-info">
+            <h3>${book.title}</h3>
+            <p><strong>Author:</strong> ${book.author}</p>
+            <p><strong>Published:</strong> ${book.year}</p>
+            <p class="book-meta">${book.info}</p>
+            <div class="book-actions">
+              <button class="btn read-btn" data-id="${book.id}">
+                <i class="fas fa-book-open"></i> Read Book
+              </button>
+            </div>
+          </div>
+        `;
+        bookList.appendChild(bookCard);
+      });
+
+      document.querySelectorAll('.read-btn').forEach(button => {
+        button.addEventListener('click', function () {
+          const bookId = this.dataset.id;
+          const book = books.find(b => b.id === bookId);
+          if (book) {
+            modalTitle.textContent = book.title;
+            modalAuthor.textContent = `by ${book.author}`;
+            bookContent.innerHTML = `
+              ${book.content}
+              <div class="book-link-container">
+                <a href="${book.link}" target="_blank" class="book-link-btn">
+                  <i class="fas fa-external-link-alt"></i>
+                  Read the original book
+                </a>
+              </div>
+            `;
+            bookModal.style.display = 'block';
+          }
+        });
+      });
+
+      closeModal.addEventListener('click', () => {
+        bookModal.style.display = 'none';
+      });
+
+      window.addEventListener('click', (e) => {
+        if (e.target === bookModal) {
+          bookModal.style.display = 'none';
+        }
+      });
+
+      printBook.addEventListener('click', () => {
+        window.print();
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', initLibrary);
+      // Theme toggle
+      toggleTheme.addEventListener('click', function() {
+        document.body.classList.toggle('dark-mode');
+        this.querySelector('span').textContent = 
+          document.body.classList.contains('dark-mode') ? 
+          'Light Mode' : 'Dark Mode';
+      });
+       // Search functionality
+      searchBar.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        const bookCards = document.querySelectorAll('.book-card');
+        let visibleCount = 0;
+        
+        bookCards.forEach(card => {
+          const title = card.querySelector('h3').textContent.toLowerCase();
+          const author = card.querySelector('p').textContent.toLowerCase();
+          const isVisible = title.includes(query) || author.includes(query);
+          
+          card.style.display = isVisible ? 'block' : 'none';
+          if (isVisible) visibleCount++;
+        });
+        bookCount.textContent = `${visibleCount} books found`;
+      });
+    
+    // ... (JavaScript code remains unchanged) ...
+  </script>
+</body>
+</html>

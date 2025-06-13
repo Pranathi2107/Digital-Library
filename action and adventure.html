@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Action & Adventure Books</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        /* CSS from Action & Adventure Books (Original) */
+        :root {
+            --primary: #3498db;
+            --secondary: #23bfb2; /* Note: This is different from main.html's header color */
+            --success: #27ae60;
+            --light: #f8f9fa;
+            --dark: #121212;
+            --text: #333;
+            --text-light: #e0e0e0;
+            --card-bg: #ecf0f1;
+            --modal-bg: #ffffff;
+            --content-bg: #f4f4f4;
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            background-color: var(--light);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* --- Styles for the animated shapes background (from main.html) --- */
+        .shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .shape {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(0, 169, 157, 0.2); /* Default light mode color */
+            animation: floatShape 15s linear infinite;
+        }
+
+        @keyframes floatShape {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-120vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* --- Header styles (from main.html) --- */
+        .main-header { /* Renamed from 'header' to avoid conflict with page-specific header */
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            font-size: 20px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: #00a99d; /* Main header background color */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img.icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo h1 {
+            margin: 0;
+            font-size: 34px;
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background-color: white;
+            color: #333;
+        }
+
+        .toggle-btn {
+            background: white;
+            color: #00a99d;
+            border: none;
+            border-radius: 5px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .toggle-btn:hover {
+            background: #007f78;
+            color: white;
+        }
+
+        /* --- Original header for page title (retained but adjusted) --- */
+        .page-title-header { /* Added class to differentiate from main nav header */
+            background: var(--secondary);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 0; /* Adjust margin if needed to be flush with nav */
+        }
+
+        .page-title-header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .book-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .book-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .book-card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .book-card p {
+            margin: 0.3rem 0;
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+
+        .btn {
+            margin-top: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: var(--modal-bg);
+            margin: 3% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 35px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #ff0000;
+        }
+
+        .reader-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .reader-header p {
+            color: var(--text);
+            font-style: italic;
+        }
+
+        .reader-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin: 1rem 0;
+        }
+
+        .reader-controls .btn {
+            background: var(--success);
+        }
+
+        .reader-controls .btn:hover {
+            background: #219653;
+        }
+
+        .book-content {
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: var(--content-bg);
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+
+        .book-content h3 {
+            color: var(--secondary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .book-content p {
+            margin-bottom: 1rem;
+        }
+
+        .book-link-container {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .book-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--success);
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .book-link-btn:hover {
+            background: #219653;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .controls { /* Controls for the page-specific search bar */
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            width: 100%;
+        }
+
+        #searchBar {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            width: 60%;
+            max-width: 500px;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        #searchBar:focus {
+            outline: none;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Removed #toggleTheme style as it's now part of the main nav toggle-btn */
+
+        .book-count {
+            text-align: center;
+            margin: 1rem 0 2rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            background: rgba(0, 0, 0, 0.03);
+            color: #666;
+        }
+
+        /* --- Dark mode styles (merged and adapted) --- */
+        body.dark-mode {
+            background-color: var(--dark);
+            color: var(--text-light);
+            --card-bg: #1e1e1e;
+            --modal-bg: #252525;
+            --content-bg: #2d2d2d;
+            --text: #e0e0e0;
+        }
+
+        .dark-mode .main-header { /* Applies to the new main nav header */
+            background-color: #11b8be; /* Dark mode main header color */
+        }
+
+        .dark-mode nav a {
+            color: #e0e0e0;
+        }
+
+        .dark-mode nav a:hover {
+            background-color: #e0e0e0;
+            color: #121212;
+        }
+
+        .dark-mode .toggle-btn {
+            background-color: #e0e0e0;
+            color: #121212;
+        }
+
+        .dark-mode .shape {
+            color: rgba(74, 26, 232, 0.616); /* Dark mode shape color */
+        }
+
+        .dark-mode .book-card {
+            background: var(--card-bg); /* Uses updated --card-bg */
+            color: var(--text); /* Uses updated --text */
+        }
+
+        .dark-mode .book-card h3,
+        .dark-mode .book-card p {
+             color: var(--text); /* Ensure text in card is light in dark mode */
+        }
+
+        .dark-mode .book-content {
+            background: var(--content-bg); /* Uses updated --content-bg */
+            color: var(--text); /* Uses updated --text */
+        }
+
+        .dark-mode .modal-content {
+            background-color: var(--modal-bg); /* Uses updated --modal-bg */
+            color: var(--text); /* Uses updated --text */
+        }
+
+        .dark-mode .reader-header h2,
+        .dark-mode .reader-header p {
+            color: var(--text); /* Ensure text in modal header is light in dark mode */
+        }
+
+        .dark-mode #searchBar {
+            background-color: #333a44;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+
+        .dark-mode footer {
+            background: rgba(255, 255, 255, 0.05);
+            color: #aaa;
+        }
+
+        /* --- Responsive adjustments (merged and adapted) --- */
+        @media (max-width: 768px) {
+            .main-header { /* Applies to your new main header */
+                flex-direction: column;
+                align-items: center;
+                padding: 15px 20px;
+            }
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-top: 15px;
+                gap: 10px;
+            }
+            .logo h1 {
+                font-size: 28px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #searchBar {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .book-list {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .modal, .modal * {
+                visibility: visible;
+            }
+            .modal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: auto;
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .modal-content {
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                padding: 20px;
+                box-shadow: none;
+                border-radius: 0;
+                max-height: none;
+                background: white;
+                color: black;
+            }
+            .close, .reader-controls, .book-link-container {
+                display: none;
+            }
+            .reader-header h2 {
+                font-size: 24pt;
+                text-align: center;
+            }
+            .reader-header p {
+                text-align: center;
+                font-size: 16pt;
+            }
+            .book-content {
+                height: auto;
+                overflow: visible;
+                padding: 0;
+                background: none;
+            }
+            .book-content h3 {
+                font-size: 18pt;
+                color: #000;
+            }
+            .book-content p {
+                font-size: 12pt;
+                margin-bottom: 12pt;
+                color: #000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shapes" id="shapes-container"></div>
+
+    <header class="main-header">
+        <div class="logo">
+            <img src="images/Library icon-Photoroom.png" class="icon" alt="Library Icon" />
+            <h1>eBookNest</h1>
+        </div>
+
+        <nav>
+            <a href="main.html">Home</a>
+<a href="home trial.html">dashboard</a>
+            <a href="about2.html">About</a>
+            <a href="contact trail.html">Contact Us</a>
+            <a href="reviews.html">Popular Books</a>
+            <a href="Loginnew.html">Login</a>
+            <button class="toggle-btn" onclick="toggleDarkMode()">🌙Dark</button>
+        </nav>
+    </header>
+
+    <header class="page-title-header">
+        <h1>Action & Adventure Books</h1>
+        <div class="controls">
+            <input type="text" id="searchBar" placeholder="Search books by title or author...">
+            </div>
+    </header>
+
+    <div class="container">
+        <div class="book-count" id="bookCount">7 adventure books available</div>
+        <div class="book-list" id="bookList"></div>
+    </div>
+
+    <div id="bookModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="reader-header">
+                <h2 id="modalTitle">Book Title</h2>
+                <p id="modalAuthor">Author Name</p>
+            </div>
+            <div class="reader-controls">
+                <button id="printBook" class="btn">
+                    <i class="fas fa-print"></i> Print Book
+                </button>
+            </div>
+            <div class="book-content" id="bookContent"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p><center>Adventure Book Library &copy; 2025 | Journey into Thrilling Worlds</center></p>
+    </footer>
+
+    <script>
+        const books = [
+            {
+                id: "treasure-island",
+                title: "Treasure Island",
+                author: "Robert Louis Stevenson",
+                year: 1883,
+                info: "A classic tale of pirates, treasure maps, and mutiny",
+                link: "https://www.gutenberg.org/ebooks/120",
+                content: `
+                    <h3>Chapter I: The Old Sea-dog at the Admiral Benbow</h3>
+                    <p>Squire Trelawney, Dr. Livesey, and the rest of these gentlemen having asked me to write down the whole particulars about Treasure Island, from the beginning to the end, keeping nothing back but the bearings of the island, and that only because there is still treasure not yet lifted, I take up my pen in the year of grace 17__ and go back to the time when my father kept the Admiral Benbow inn and the brown old seaman with the sabre cut first took up his lodging under our roof.</p>
+                    
+                    <h3>Chapter III: The Black Spot</h3>
+                    <p>About noon I stopped at the captain's door with some cooling drinks and medicines. He was lying very much as we had left him, only a little higher, and he seemed both weak and excited. "Jim," he said, "you're the only one here that's worth anything, and you know I've been always good to you. Never a month but I've given you a silver fourpenny for yourself. And now you see, mate, I'm pretty low, and deserted by all; and Jim, you'll bring me one noggin of rum, now, won't you, matey?"</p>
+                    
+                    <h3>Chapter XXVIII: In the Enemy's Camp</h3>
+                    <p>The appearance of the island when I came on deck next morning was altogether changed. Although the breeze had now utterly ceased, we had made a great deal of way during the night and were now lying becalmed about half a mile to the south-east of the low eastern coast. Grey-coloured woods covered a large part of the surface.</p>
+                `
+            },
+            {
+                id: "count-monte-cristo",
+                title: "The Count of Monte Cristo",
+                author: "Alexandre Dumas",
+                year: 1844,
+                info: "A tale of betrayal, revenge, and redemption",
+                link: "https://www.gutenberg.org/ebooks/1184",
+                content: `
+                    <h3>Chapter I: Marseilles—The Arrival</h3>
+                    <p>On the 24th of February, 1815, the look-out at Notre-Dame de la Garde signalled the three-master, the Pharaon from Smyrna, Trieste, and Naples. As usual, a pilot put off immediately, and rounding the Château d'If, got on board the vessel between Cape Morgion and Rion island.</p>
+                    
+                    <h3>Chapter XV: Number 34 and Number 27</h3>
+                    <p>Dantès passed through all the stages of torture natural to prisoners in suspense. He was sustained at first by that pride of conscious innocence which is the sequence to hope; then he began to doubt his own innocence, which justified in some measure the governor's belief in his mental alienation; and then, relaxing his sentiment of pride, he addressed his supplications, not to God, but to man.</p>
+                    
+                    <h3>Chapter LXI: The Telegraph</h3>
+                    <p>Monsieur and Madame de Villefort found on their return that the Count of Monte Cristo, who had come to visit them in their absence, had been ushered into the drawing-room, and was still awaiting them there. Overjoyed at this news, Madame de Villefort hastened upstairs.</p>
+                `
+            },
+            {
+                id: "king-solomon-mines",
+                title: "King Solomon's Mines",
+                author: "H. Rider Haggard",
+                year: 1885,
+                info: "An expedition to find a treasure in unexplored Africa",
+                link: "https://www.gutenberg.org/ebooks/2166",
+                content: `
+                    <h3>Chapter I: I Meet Sir Henry Curtis</h3>
+                    <p>It is a curious thing that at my age—fifty-five last birthday—I should find myself taking up a pen to try to write a history. I wonder what sort of a history it will be when I have finished it, if ever I come to the end of the trip! I have done a good many things in my life, which seems a long one to me, owing to my having begun work so young, perhaps.</p>
+                    
+                    <h3>Chapter V: Our March into the Desert</h3>
+                    <p>We had eaten our breakfast and were sitting smoking on the little veranda in front of Good's watch-house when Sir Henry strolled up. There was an anxious look on his face.</p>
+                    
+                    <h3>Chapter X: The Witch-hunt</h3>
+                    <p>On reaching our hut I motioned to Infadoos to enter with us. "Infadoos," I said, "we would speak with thee." "Let my lords say on." "It seems to us, Infadoos, that Twala the king is a cruel man." "It is so, my lords. Alas! the land cries out because of his cruelties. To-night ye shall see. It is the great witch-hunt, and many will be smelt out as wizards and slain."</p>
+                `
+            },
+            {
+                id: "journey-center-earth",
+                title: "Journey to the Center of the Earth",
+                author: "Jules Verne",
+                year: 1864,
+                info: "A daring expedition through volcanic passages",
+                link: "https://www.gutenberg.org/ebooks/18857",
+                content: `
+                    <h3>Chapter I: The Professor and His Family</h3>
+                    <p>On the 24th of May, 1863, my uncle, Professor Liedenbrock, rushed into his little house, No. 19 Königstrasse, one of the oldest streets in the oldest portion of the city of Hamburg. Martha must have concluded that she was very much behindhand, for the dinner had only just been put into the oven.</p>
+                    
+                    <h3>Chapter XIV: The Real Journey Begins</h3>
+                    <p>At six in the morning we were ready to depart. The necessary arrangements for our descent were not difficult to make, as we simply had to lower our luggage by ropes to the bottom of the crater. Hans took charge of this part of the work, and soon all our packages were lying at the bottom of the abyss.</p>
+                    
+                    <h3>Chapter XXXVI: What is it?</h3>
+                    <p>Here ends what I call "My Journal" of our voyage on board the raft, which journal was happily saved from the wreck. I proceed with my narrative as before. From the moment when the raft struck upon the rocks, the voyage became a series of perils.</p>
+                `
+            },
+            {
+                id: "prisoner-zenda",
+                title: "The Prisoner of Zenda",
+                author: "Anthony Hope",
+                year: 1894,
+                info: "Swashbuckling adventure in a fictional European kingdom",
+                link: "https://www.gutenberg.org/ebooks/95",
+                content: `
+                    <h3>Chapter I: The Rassendylls—With a Word on the Elphbergs</h3>
+                    <p>"I wonder when in the world you're going to do anything, Rudolf?" said my brother's wife. "My dear Rose," I answered, laying down my egg-spoon, "why in the world should I do anything? My position is a comfortable one. I have an income nearly sufficient for my wants (no one's income is ever quite sufficient, you know), I enjoy an enviable social position: I am brother to Lord Burlesdon, and brother-in-law to the charming Countess of Burlesdon."</p>
+                    
+                    <h3>Chapter V: The Adventures of an Understudy</h3>
+                    <p>With Fritz von Tarlenheim and Colonel Sapt close behind me, I stepped out of the chapel porch. The scene was memorable. Before me was a wide gravelled court, six or seven yards across. Beyond this stretched another court, and beyond that again the great park.</p>
+                    
+                    <h3>Chapter XII: I Receive a Visitor and Bait a Hook</h3>
+                    <p>About five miles from Zenda—on the opposite side from that on which the Castle is situated, there lies a large tract of wood. It is rising ground, and in the centre of the demesne, on the top of the hill, stands a fine modern chateau.</p>
+                `
+            },
+            {
+                id: "three-musketeers",
+                title: "The Three Musketeers",
+                author: "Alexandre Dumas",
+                year: 1844,
+                info: "Sword fights, romance, and intrigue in 17th century France",
+                link: "https://www.gutenberg.org/ebooks/1257",
+                content: `
+                    <h3>Chapter I: The Three Presents of D'Artagnan the Elder</h3>
+                    <p>On the first Monday of the month of April, 1625, the market town of Meung, in which the author of ROMANCE OF THE ROSE was born, appeared to be in as perfect a state of revolution as if the Huguenots had just made a second La Rochelle of it.</p>
+                    
+                    <h3>Chapter V: The King's Musketeers and the Cardinal's Guards</h3>
+                    <p>D'Artagnan was acquainted with nobody in Paris. He went therefore to his appointment with Athos without a second, determined to be satisfied with those his adversary should choose. Besides, his intention was formed to make the brave Musketeer all suitable apologies, but without meanness or weakness.</p>
+                    
+                    <h3>Chapter XXVII: The Wife of Athos</h3>
+                    <p>We have now to search for Athos," said D'Artagnan to the vivacious Aramis, when he had informed him of all that had passed since their departure from the capital, and an excellent dinner had made one of them forget his thesis and the other his fatigue.</p>
+                `
+            },
+            {
+                id: "call-of-wild",
+                title: "The Call of the Wild",
+                author: "Jack London",
+                year: 1903,
+                info: "A sled dog's journey from domestication to wild freedom",
+                link: "https://www.gutenberg.org/ebooks/215",
+                content: `
+                    <h3>Chapter I: Into the Primitive</h3>
+                    <p>Buck did not read the newspapers, or he would have known that trouble was brewing, not alone for himself, but for every tide-water dog, strong of muscle and with warm, long hair, from Puget Sound to San Diego. Because men, groping in the Arctic darkness, had found a yellow metal, and because steamship and transportation companies were booming the find, thousands of men were rushing into the Northland.</p>
+                    
+                    <h3>Chapter III: The Dominant Primordial Beast</h3>
+                    <p>The dominant primordial beast was strong in Buck, and under the fierce conditions of trail life it grew and grew. Yet it was a secret growth. His newborn cunning gave him poise and control. He was too busy adjusting himself to the new life to feel at ease, and not only did he not pick fights, but he avoided them whenever possible.</p>
+                    
+                    <h3>Chapter VII: The Sounding of the Call</h3>
+                    <p>When Buck earned sixteen hundred dollars in five minutes for John Thornton, he made it possible for his master to pay off certain debts and to journey with his partners into the East after a fabled lost mine, the history of which was as old as the history of the country.</p>
+                `
+            }
+        ];
+
+        // DOM Elements
+        const searchBar = document.getElementById('searchBar');
+        // Removed original toggleTheme as it's now part of the main nav toggle-btn
+        const bookList = document.getElementById('bookList');
+        const bookModal = document.getElementById('bookModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalAuthor = document.getElementById('modalAuthor');
+        const bookContent = document.getElementById('bookContent');
+        const closeModal = document.querySelector('.close');
+        const printBook = document.getElementById('printBook');
+        const bookCount = document.getElementById('bookCount');
+
+        // Animated background shapes (from main.html)
+        const shapesContainer = document.getElementById("shapes-container");
+        const icon = "📘"; // You can change this icon
+
+        if (shapesContainer) { // Check if the container exists
+            for (let i = 0; i < 30; i++) {
+                const shape = document.createElement("div");
+                shape.classList.add("shape");
+                shape.innerText = icon;
+                shape.style.left = Math.random() * 100 + "%";
+                shape.style.top = Math.random() * 100 + 50 + "%";
+                shape.style.fontSize = Math.random() * 20 + 20 + "px";
+                shape.style.animationDuration = (Math.random() * 10 + 10) + "s";
+                shapesContainer.appendChild(shape);
+            }
+        }
+
+        // Toggle dark mode function (from main.html)
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+            // Update toggle button text
+            const toggleButton = document.querySelector('.toggle-btn');
+            if (toggleButton) { // Ensure button exists before trying to change its text
+                toggleButton.textContent = document.body.classList.contains('dark-mode') ? '💡Light' : '🌙Dark';
+            }
+        }
+
+        // Initialize Library
+        function initLibrary() {
+            bookList.innerHTML = ''; // Clear existing content
+            
+            books.forEach(book => {
+                const bookCard = document.createElement('div');
+                bookCard.className = 'book-card';
+                bookCard.innerHTML = `
+                    <div class="book-info">
+                        <h3>${book.title}</h3>
+                        <p><strong>Author:</strong> ${book.author}</p>
+                        <p><strong>Published:</strong> ${book.year}</p>
+                        <p>${book.info}</p>
+                        <div class="book-actions">
+                            <button class="btn read-btn" data-id="${book.id}">
+                                <i class="fas fa-book-open"></i> Read Book
+                            </button>
+                        </div>
+                    </div>
+                `;
+                bookList.appendChild(bookCard);
+            });
+
+            // Set initial book count
+            bookCount.textContent = `${books.length} adventure book${books.length !== 1 ? 's' : ''} available`;
+
+            // Add event listeners to read buttons
+            addReadButtonListeners();
+        }
+
+        // Add event listeners to read buttons
+        function addReadButtonListeners() {
+            document.querySelectorAll('.read-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const bookId = this.dataset.id;
+                    const book = books.find(b => b.id === bookId);
+                    if (book) {
+                        openBookModal(book);
+                    }
+                });
+            });
+        }
+
+        // Open book modal with content
+        function openBookModal(book) {
+            modalTitle.textContent = book.title;
+            modalAuthor.textContent = `by ${book.author}`;
+            bookContent.innerHTML = `
+                ${book.content}
+                <div class="book-link-container">
+                    <a href="${book.link}" target="_blank" class="book-link-btn">
+                        <i class="fas fa-external-link-alt"></i>
+                        Read the original book
+                    </a>
+                </div>
+            `;
+            bookModal.style.display = 'block';
+        }
+
+        // Close Modal
+        closeModal.addEventListener('click', () => {
+            bookModal.style.display = 'none';
+        });
+
+        // Close Modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === bookModal) {
+                bookModal.style.display = 'none';
+            }
+        });
+
+        // Print Book
+        printBook.addEventListener('click', () => {
+            window.print();
+        });
+
+        // Search Functionality
+        searchBar.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const bookCards = document.querySelectorAll('.book-card');
+            let visibleCount = 0;
+            
+            bookCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const author = card.querySelector('p').textContent.toLowerCase();
+                const isVisible = title.includes(query) || author.includes(query);
+                
+                card.style.display = isVisible ? 'block' : 'none';
+                if (isVisible) visibleCount++;
+            });
+            
+            bookCount.textContent = `${visibleCount} book${visibleCount !== 1 ? 's' : ''} found`;
+        });
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize dark mode text for the main navigation toggle button
+            const initialToggleButton = document.querySelector('.toggle-btn');
+            if (initialToggleButton) { // Ensure button exists
+                if (document.body.classList.contains('dark-mode')) {
+                    initialToggleButton.textContent = '💡Light';
+                } else {
+                    initialToggleButton.textContent = '🌙Dark';
+                }
+            }
+            // Initialize the book list
+            initLibrary();
+        });
+    </script>
+</body>
+</html>

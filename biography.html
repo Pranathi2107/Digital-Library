@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biography Books</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --primary: #3498db;
+      --secondary: #9b59b6;
+      --success: #27ae60;
+      --light: #f8f9fa;
+      --dark: #121212;
+      --text: #333;
+      --text-light: #e0e0e0;
+      --card-bg: #ecf0f1;
+      --modal-bg: #ffffff;
+      --content-bg: #f4f4f4;
+    }
+
+    body {
+      font-family: 'Lora', serif;
+      background-color: var(--light);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+      background-color: var(--dark);
+      color: var(--text-light);
+      --card-bg: #1e1e1e;
+      --modal-bg: #252525;
+      --content-bg: #2d2d2d;
+      --text: #e0e0e0;
+    }
+
+    header {
+      background: var(--secondary);
+      color: white;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .book-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .book-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+
+    .book-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .book-card h3 {
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .book-card p {
+      margin: 0.3rem 0;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .btn {
+      margin-top: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .btn:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      overflow: auto;
+    }
+
+    .modal-content {
+      background-color: var(--modal-bg);
+      margin: 3% auto;
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 900px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 35px;
+      font-weight: bold;
+      color: #aaa;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .close:hover {
+      color: #ff0000;
+    }
+
+    .reader-header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .reader-header p {
+      color: var(--text);
+      font-style: italic;
+    }
+
+    .reader-controls {
+      display: flex;
+      justify-content: flex-end;
+      margin: 1rem 0;
+    }
+
+    .reader-controls .btn {
+      background: var(--success);
+    }
+
+    .reader-controls .btn:hover {
+      background: #219653;
+    }
+
+    .book-content {
+      overflow-y: auto;
+      padding: 1.5rem;
+      background: var(--content-bg);
+      border-radius: 8px;
+      margin-top: 1rem;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text);
+    }
+
+    .book-content h3 {
+      color: var(--secondary);
+      border-bottom: 2px solid var(--secondary);
+      padding-bottom: 0.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .book-content p {
+      margin-bottom: 1rem;
+    }
+
+    .book-link-container {
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+
+    .book-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.5rem;
+      background: var(--success);
+      color: white;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .book-link-btn:hover {
+      background: #219653;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      width: 100%;
+    }
+
+    #searchBar {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 50px;
+      width: 60%;
+      max-width: 500px;
+      font-size: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    #searchBar:focus {
+      outline: none;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+      transform: translateY(-2px);
+    }
+
+    #toggleTheme {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #toggleTheme:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .book-count {
+      text-align: center;
+      margin: 1rem 0 2rem;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 3rem;
+      background: rgba(0, 0, 0, 0.03);
+      color: #666;
+    }
+
+    body.dark-mode footer {
+      background: rgba(255, 255, 255, 0.05);
+      color: #aaa;
+    }
+
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      #searchBar {
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      .book-list {
+        grid-template-columns: 1fr;
+      }
+      
+      .modal-content {
+        padding: 20px;
+      }
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .modal, .modal * {
+        visibility: visible;
+      }
+      .modal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: auto;
+        background: white;
+        padding: 0;
+        margin: 0;
+      }
+      .modal-content {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 20px;
+        box-shadow: none;
+        border-radius: 0;
+        max-height: none;
+        background: white;
+        color: black;
+      }
+      .close, .reader-controls, .book-link-container {
+        display: none;
+      }
+      .reader-header h2 {
+        font-size: 24pt;
+        text-align: center;
+      }
+      .reader-header p {
+        text-align: center;
+        font-size: 16pt;
+      }
+      .book-content {
+        height: auto;
+        overflow: visible;
+        padding: 0;
+        background: none;
+      }
+      .book-content h3 {
+        font-size: 18pt;
+        color: #000;
+      }
+      .book-content p {
+        font-size: 12pt;
+        margin-bottom: 12pt;
+        color: #000;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Biography Books</h1>
+    <div class="controls">
+      <input type="text" id="searchBar" placeholder="Search books by title or author...">
+      <button id="toggleTheme">
+        <span>🌙 Dark Mode</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="book-list" id="bookList"></div>
+  </div>
+
+  <!-- Book Reader Modal -->
+  <div id="bookModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div class="reader-header">
+        <h2 id="modalTitle">Book Title</h2>
+        <p id="modalAuthor">Author Name</p>
+      </div>
+      <div class="reader-controls">
+        <button id="printBook" class="btn">
+          <i class="fas fa-print"></i> Print Book
+        </button>
+      </div>
+      <div class="book-content" id="bookContent"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p><center>Biography Library &copy; 2025 | Discover Lives That Shaped Our World</center></p>
+  </footer>
+
+  <script>
+    const books = [
+      {
+        id: "einstein",
+        title: "Einstein: His Life and Universe",
+        author: "Walter Isaacson",
+        year: 2007,
+        info: "A comprehensive biography of Albert Einstein",
+        link: "https://en.wikipedia.org/wiki/Einstein:_His_Life_and_Universe",
+        content: `
+          <h3>Chapter 1: The Light-Beam Rider</h3>
+          <p>Albert Einstein was born at 11:30 AM on Friday, March 14, 1879, in the southern German city of Ulm. His parents, Hermann and Pauline, were secular Jews who felt perfectly assimilated and at home in Germany.</p>
+          
+          <h3>Chapter 5: The Miracle Year</h3>
+          <p>In 1905, while working as a patent clerk in Bern, Switzerland, Einstein published four groundbreaking papers. These papers introduced the special theory of relativity, explained the photoelectric effect, discussed Brownian motion, and demonstrated mass-energy equivalence.</p>
+          
+          <h3>Chapter 10: The General Theory of Relativity</h3>
+          <p>Einstein spent nearly a decade developing his general theory of relativity, which he considered his masterpiece. The theory, published in 1915, revolutionized our understanding of gravity as the curvature of spacetime.</p>
+        `
+      },
+      {
+        id: "jobs",
+        title: "Steve Jobs",
+        author: "Walter Isaacson",
+        year: 2011,
+        info: "The authorized biography of Apple's co-founder",
+        link: "https://en.wikipedia.org/wiki/Steve_Jobs_(book)",
+        content: `
+          <h3>Chapter 1: Childhood</h3>
+          <p>Steven Paul Jobs was born on February 24, 1955, to two University of Wisconsin graduate students who gave him up for adoption. He was adopted by Paul and Clara Jobs, who moved to Mountain View, California when Steve was five.</p>
+          
+          <h3>Chapter 7: Apple's Renaissance</h3>
+          <p>After returning to Apple in 1997, Jobs revitalized the company by introducing revolutionary products like the iMac, iPod, iPhone, and iPad. His focus on design simplicity and user experience became Apple's hallmark.</p>
+          
+          <h3>Chapter 30: Legacy</h3>
+          <p>Steve Jobs passed away on October 5, 2011. His vision and relentless pursuit of perfection transformed six industries: personal computing, animated movies, music, phones, tablet computing, and digital publishing.</p>
+        `
+      },
+      {
+        id: "mandela",
+        title: "Long Walk to Freedom",
+        author: "Nelson Mandela",
+        year: 1994,
+        info: "The autobiography of Nelson Mandela",
+        link: "https://en.wikipedia.org/wiki/Long_Walk_to_Freedom",
+        content: `
+          <h3>Chapter 1: Country Childhood</h3>
+          <p>I was born on July 18, 1918, in the tiny village of Mvezo, on the banks of the Mbashe River in Transkei. My father, Gadla Henry Mphakanyiswa, was a chief by both blood and custom.</p>
+          
+          <h3>Chapter 15: The Rivonia Trial</h3>
+          <p>During the Rivonia Trial, I prepared a statement from the dock that would last more than four hours. It ended with these words: 'I have cherished the ideal of a democratic and free society... it is an ideal for which I am prepared to die.'</p>
+          
+          <h3>Chapter 23: Freedom</h3>
+          <p>On February 11, 1990, I walked out of Victor Verster Prison after 27 years of incarceration. The sight of people cheering, the sound of their applause, was overwhelming.</p>
+        `
+      },
+      {
+        id: "benjamin-franklin",
+        title: "Benjamin Franklin: An American Life",
+        author: "Walter Isaacson",
+        year: 2003,
+        info: "Biography of America's founding father",
+        link: "https://en.wikipedia.org/wiki/Benjamin_Franklin:_An_American_Life",
+        content: `
+          <h3>Chapter 2: Apprentice</h3>
+          <p>At age 12, Benjamin Franklin became an apprentice to his brother James, a printer. During this time, Franklin began his lifelong passion for reading and self-education.</p>
+          
+          <h3>Chapter 5: Scientist and Inventor</h3>
+          <p>Franklin's experiments with electricity, including his famous kite experiment, made him internationally famous. His inventions included the lightning rod, bifocals, and the Franklin stove.</p>
+          
+          <h3>Chapter 10: Founding Father</h3>
+          <p>In his later years, Franklin played a crucial role in the American Revolution and the founding of the United States. He helped draft the Declaration of Independence and the Constitution.</p>
+        `
+      },
+      {
+        id: "da-vinci",
+        title: "Leonardo da Vinci",
+        author: "Walter Isaacson",
+        year: 2017,
+        info: "The biography of history's most creative genius",
+        link: "https://en.wikipedia.org/wiki/Leonardo_da_Vinci_(book)",
+        content: `
+          <h3>Chapter 1: The Outsider</h3>
+          <p>Leonardo was born on April 15, 1452, in the Tuscan hill town of Vinci. He was the illegitimate son of a young notary and a peasant woman, which gave him freedom from family expectations.</p>
+          
+          <h3>Chapter 7: The Notebooks</h3>
+          <p>Leonardo's notebooks reveal a mind that wandered dazzlingly across all fields of human knowledge. His studies included anatomy, engineering, botany, geology, optics, and hydrodynamics.</p>
+          
+          <h3>Chapter 15: The Last Supper and Mona Lisa</h3>
+          <p>Leonardo's masterpieces, The Last Supper and Mona Lisa, showcase his genius in capturing human emotion and his revolutionary painting techniques that created depth and realism.</p>
+        `
+      },
+      {
+        id: "malala",
+        title: "I Am Malala",
+        author: "Malala Yousafzai",
+        year: 2013,
+        info: "The story of the girl who stood up for education",
+        link: "https://en.wikipedia.org/wiki/I_Am_Malala",
+        content: `
+          <h3>Chapter 1: A Daughter Is Born</h3>
+          <p>I was born a daughter in a land where rifles are fired in celebration of a son, while daughters are hidden away behind a curtain.</p>
+          
+          <h3>Chapter 5: The Valley of Death</h3>
+          <p>As the Taliban took control of Swat Valley, they destroyed girls' schools and enforced strict Islamic laws. I began speaking out for girls' right to education.</p>
+          
+          <h3>Chapter 9: Miracles</h3>
+          <p>On October 9, 2012, a Taliban gunman shot me on my school bus. After extensive surgeries and rehabilitation in the UK, I recovered and continued my activism for education.</p>
+        `
+      },
+      {
+        id: "churchill",
+        title: "Churchill: Walking with Destiny",
+        author: "Andrew Roberts",
+        year: 2018,
+        info: "Definitive biography of Winston Churchill",
+        link: "https://en.wikipedia.org/wiki/Churchill:_Walking_with_Destiny",
+        content: `
+          <h3>Chapter 1: The Young Churchill</h3>
+          <p>Winston Leonard Spencer Churchill was born on November 30, 1874, at Blenheim Palace. His early years were marked by a distant relationship with his parents and academic struggles.</p>
+          
+          <h3>Chapter 12: The Wilderness Years</h3>
+          <p>During the 1930s, Churchill was politically isolated as he warned about the dangers of Nazi Germany while most of Britain favored appeasement.</p>
+          
+          <h3>Chapter 20: Their Finest Hour</h3>
+          <p>As Prime Minister during World War II, Churchill's leadership and powerful oratory inspired Britain to resist Nazi Germany during its darkest hours.</p>
+        `
+      }
+    ];
+
+    // DOM Elements
+    const searchBar = document.getElementById('searchBar');
+    const toggleTheme = document.getElementById('toggleTheme');
+    const bookList = document.getElementById('bookList');
+    const bookModal = document.getElementById('bookModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalAuthor = document.getElementById('modalAuthor');
+    const bookContent = document.getElementById('bookContent');
+    const closeModal = document.querySelector('.close');
+    const printBook = document.getElementById('printBook');
+    const bookCount = document.getElementById('bookCount');
+
+    // Initialize Library
+    function initLibrary() {
+      bookList.innerHTML = ''; // Clear existing content
+      
+      books.forEach(book => {
+        const bookCard = document.createElement('div');
+        bookCard.className = 'book-card';
+        bookCard.innerHTML = `
+          <div class="book-info">
+            <h3>${book.title}</h3>
+            <p><strong>Author:</strong> ${book.author}</p>
+            <p><strong>Published:</strong> ${book.year}</p>
+            <p>${book.info}</p>
+            <div class="book-actions">
+              <button class="btn read-btn" data-id="${book.id}">
+                <i class="fas fa-book-open"></i> Read Book
+              </button>
+            </div>
+          </div>
+        `;
+        bookList.appendChild(bookCard);
+      });
+
+      // Set initial book count
+      bookCount.textContent = `${books.length} biography books available`;
+
+      // Add event listeners to read buttons
+      addReadButtonListeners();
+    }
+
+    // Add event listeners to read buttons
+    function addReadButtonListeners() {
+      document.querySelectorAll('.read-btn').forEach(button => {
+        button.addEventListener('click', function() {
+          const bookId = this.dataset.id;
+          const book = books.find(b => b.id === bookId);
+          if (book) {
+            openBookModal(book);
+          }
+        });
+      });
+    }
+
+    // Open book modal with content
+    function openBookModal(book) {
+      modalTitle.textContent = book.title;
+      modalAuthor.textContent = `by ${book.author}`;
+      bookContent.innerHTML = `
+        ${book.content}
+        <div class="book-link-container">
+          <a href="${book.link}" target="_blank" class="book-link-btn">
+            <i class="fas fa-external-link-alt"></i>
+            Read the original book
+          </a>
+        </div>
+      `;
+      bookModal.style.display = 'block';
+    }
+
+    // Close Modal
+    closeModal.addEventListener('click', () => {
+      bookModal.style.display = 'none';
+    });
+
+    // Close Modal when clicking outside
+    window.addEventListener('click', (e) => {
+      if (e.target === bookModal) {
+        bookModal.style.display = 'none';
+      }
+    });
+
+    // Print Book
+    printBook.addEventListener('click', () => {
+      window.print();
+    });
+
+    // Theme Toggle
+    toggleTheme.addEventListener('click', function() {
+      document.body.classList.toggle('dark-mode');
+      this.querySelector('span').textContent = 
+        document.body.classList.contains('dark-mode') ? 
+        '☀️ Light Mode' : '🌙 Dark Mode';
+    });
+
+    // Search Functionality
+    searchBar.addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      const bookCards = document.querySelectorAll('.book-card');
+      let visibleCount = 0;
+      
+      bookCards.forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        const author = card.querySelector('p').textContent.toLowerCase();
+        const isVisible = title.includes(query) || author.includes(query);
+        
+        card.style.display = isVisible ? 'block' : 'none';
+        if (isVisible) visibleCount++;
+      });
+      
+      bookCount.textContent = `${visibleCount} book${visibleCount !== 1 ? 's' : ''} found`;
+    });
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', initLibrary);
+  </script>
+</body>
+</html>

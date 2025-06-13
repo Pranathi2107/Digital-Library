@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Us - Digital Library</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Lora', serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #a2c0c7, #d0e4ea);
+            color: #222;
+            transition: background 0.3s, color 0.3s;
+        }
+        .shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            opacity:0.3;
+        }
+
+        .shape {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(0, 169, 157, 0.2);
+            animation: floatShape 15s linear infinite;
+        }
+
+        @keyframes floatShape {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-120vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        /* Styles copied from main.html for consistent header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            font-size: 20px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: #00a99d;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img.icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo h1 {
+            margin: 0;
+            font-size: 34px;
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background-color: white;
+            color: #333;
+        }
+
+        .toggle-btn {
+            background: white;
+            color: #00a99d;
+            border: none;
+            border-radius: 5px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .toggle-btn:hover {
+            background: #007f78;
+            color: white;
+        }
+
+        /* Dark mode styles from main.html */
+        .dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+
+        .dark-mode header {
+            background-color: #11b8be;
+        }
+
+        .dark-mode .logo h1 {
+            color: #e0e0e0;
+        }
+
+        .dark-mode nav a {
+            color: #e0e0e0;
+        }
+
+        .dark-mode nav a:hover {
+            background-color: #e0e0e0;
+            color: #121212;
+        }
+
+        .dark-mode .toggle-btn {
+            background-color: #e0e0e0;
+            color: #121212;
+        }
+        .dark-mode .shape {
+            color: rgba(74, 26, 232, 0.616);
+        }
+
+        /* End of copied styles from main.html */
+
+        /* Specific styles for Contact Us page content */
+        .contact-page-title {
+            text-align: center;
+            font-size: 2.5em;
+            margin-top: 30px;
+            color: #008080;
+            text-shadow: 1px 1px 2px #ddd;
+        }
+
+        .contact-container {
+            background-color: #f3f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 650px;
+            margin: 40px auto;
+            border-left: 8px solid #00b3a4;
+            box-shadow:
+                -3px 0 10px rgba(0, 179, 164, 0.3),
+                0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 14px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #008080;
+        }
+
+        input, textarea {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #aaa;
+            background-color: #ffffff;
+            color: #333;
+            margin-top: 5px;
+            font-size: 1em;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #00b3a4;
+            outline: none;
+            box-shadow: 0 0 6px rgba(0, 179, 164, 0.3);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        input[type="submit"] {
+            background-color: #00b3a4;
+            color: #fff;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #008c7f;
+            transform: scale(1.02);
+        }
+
+        .contact-info p {
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .contact-info a {
+            color: #008080;
+            text-decoration: none;
+        }
+
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #e3f0f3;
+            color: #555;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 640px) {
+            .contact-container {
+                margin: 20px;
+                padding: 20px;
+            }
+        }
+        /* Dark mode specific for contact form */
+        .dark-mode .contact-container {
+            background-color: #1e1e1e;
+            border-left-color: #11b8be;
+            box-shadow:
+                -3px 0 10px rgba(17, 184, 190, 0.3),
+                0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+        .dark-mode label {
+            color: #11b8be;
+        }
+        .dark-mode input,
+        .dark-mode textarea {
+            background-color: #2a2a2a;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+        .dark-mode input:focus,
+        .dark-mode textarea:focus {
+            border-color: #11b8be;
+            box-shadow: 0 0 6px rgba(17, 184, 190, 0.5);
+        }
+        .dark-mode input[type="submit"] {
+            background-color: #007f78;
+        }
+        .dark-mode input[type="submit"]:hover {
+            background-color: #005f5a;
+        }
+        .dark-mode .contact-info p,
+        .dark-mode .contact-info a {
+            color: #e0e0e0;
+        }
+        .dark-mode .contact-info a:hover {
+            color: #11b8be;
+        }
+        .dark-mode footer {
+            background-color: #2a2a2a;
+            color: #bbb;
+        }
+        .dark-mode .contact-page-title {
+            color: #11b8be;
+            text-shadow: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="shapes" id="shapes-container"></div>
+
+    <header>
+        <div class="logo">
+            <img src="images/Library icon-Photoroom.png" class="icon" alt="Library Icon" />
+            <h1>eBookNest</h1>
+        </div>
+
+        <nav>
+            <a href="main.html">Home</a>
+            <a href="about2.html">About</a>
+            <a href="contact trail.html">Contact Us</a>
+            <a href="reviews.html">Popular Books</a>
+            <a href="Loginnew.html">Login</a>
+            <button class="toggle-btn" onclick="toggleDarkMode()">🌙Dark</button>
+        </nav>
+    </header>
+
+    <main>
+        <h1 class="contact-page-title">Contact Us</h1>
+        <div class="contact-container">
+            <form id="contactForm" action="#" method="post">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" placeholder="Your name..." required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Your email..." required>
+
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" placeholder="Your message..." required></textarea>
+
+                <input type="submit" value="Submit">
+            </form>
+
+            <div class="contact-info">
+                <p><strong>Email:</strong> <a href="mailto:ebookNest@gmail.com">ebookNest@gmail.com</a></p>
+                <p><strong>Phone:</strong> <a href="tel:1234567892">1234567892</a></p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Digital Library. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Dark mode toggle function
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+        }
+
+        // Floating shapes script
+        const container = document.getElementById("shapes-container");
+        const icon = "📘"; // You can change this icon or add more
+
+        for (let i = 0; i < 30; i++) {
+            const shape = document.createElement("div");
+            shape.classList.add("shape");
+            shape.innerText = icon;
+            shape.style.left = Math.random() * 100 + "%";
+            // Start shapes lower on the screen so they float up
+            shape.style.top = Math.random() * 50 + 100 + "%"; // Starts below view and floats up
+            shape.style.fontSize = Math.random() * 20 + 20 + "px";
+            shape.style.animationDuration = (Math.random() * 10 + 10) + "s";
+            shape.style.animationDelay = (Math.random() * 5) + "s"; // Stagger the start times
+            container.appendChild(shape);
+        }
+
+        // Contact form submission handling (client-side only, no backend)
+        document.getElementById("contactForm").addEventListener("submit", function(e) {
+            const nameInput = document.getElementById("name");
+            const emailInput = document.getElementById("email");
+            const messageInput = document.getElementById("message");
+
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            const message = messageInput.value.trim();
+
+            if (!name || !email || !message) {
+                alert("Please fill in all fields before submitting.");
+                e.preventDefault(); // Prevent the default form submission (page reload)
+            } else {
+                alert("Thank you for your message! (This form is for demonstration purposes only and does not send data.)");
+                e.preventDefault(); // Prevent the default form submission (page reload)
+
+                // Clear the form fields after successful 'demo' submission
+                nameInput.value = '';
+                emailInput.value = '';
+                messageInput.value = '';
+            }
+        });
+    </script>
+</body>
+</html>

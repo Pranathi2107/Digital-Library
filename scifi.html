@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sci-Fi Books</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --primary: #3498db;
+      --secondary: #23bfb2;
+      --success: #27ae60;
+      --light: #f8f9fa;
+      --dark: #121212;
+      --text: #333;
+      --text-light: #e0e0e0;
+      --card-bg: #ecf0f1;
+      --modal-bg: #ffffff;
+      --content-bg: #f4f4f4;
+    }
+
+    body {
+      font-family: 'Lora', serif;
+      background-color: var(--light);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+      background-color: var(--dark);
+      color: var(--text-light);
+      --card-bg: #1e1e1e;
+      --modal-bg: #252525;
+      --content-bg: #2d2d2d;
+      --text: #e0e0e0;
+    }
+
+    header {
+      background: var(--secondary);
+      color: white;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .book-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .book-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+
+    .book-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .book-card h3 {
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .book-card p {
+      margin: 0.3rem 0;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .btn {
+      margin-top: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .btn:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      overflow: auto;
+    }
+
+    .modal-content {
+      background-color: var(--modal-bg);
+      margin: 3% auto;
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 900px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 35px;
+      font-weight: bold;
+      color: #aaa;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .close:hover {
+      color: #ff0000;
+    }
+
+    .reader-header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .reader-header p {
+      color: var(--text);
+      font-style: italic;
+    }
+
+    .reader-controls {
+      display: flex;
+      justify-content: flex-end;
+      margin: 1rem 0;
+    }
+
+    .reader-controls .btn {
+      background: var(--success);
+    }
+
+    .reader-controls .btn:hover {
+      background: #219653;
+    }
+
+    .book-content {
+      overflow-y: auto;
+      padding: 1.5rem;
+      background: var(--content-bg);
+      border-radius: 8px;
+      margin-top: 1rem;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text);
+    }
+
+    .book-content h3 {
+      color: var(--secondary);
+      border-bottom: 2px solid var(--secondary);
+      padding-bottom: 0.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .book-content p {
+      margin-bottom: 1rem;
+    }
+
+    .book-link-container {
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+
+    .book-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.5rem;
+      background: var(--success);
+      color: white;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .book-link-btn:hover {
+      background: #219653;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      width: 100%;
+    }
+
+    #searchBar {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 50px;
+      width: 60%;
+      max-width: 500px;
+      font-size: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    #searchBar:focus {
+      outline: none;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+      transform: translateY(-2px);
+    }
+
+    #toggleTheme {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #toggleTheme:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .book-count {
+      text-align: center;
+      margin: 1rem 0 2rem;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 3rem;
+      background: rgba(0, 0, 0, 0.03);
+      color: #666;
+    }
+
+    body.dark-mode footer {
+      background: rgba(255, 255, 255, 0.05);
+      color: #aaa;
+    }
+
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      #searchBar {
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      .book-list {
+        grid-template-columns: 1fr;
+      }
+      
+      .modal-content {
+        padding: 20px;
+      }
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .modal, .modal * {
+        visibility: visible;
+      }
+      .modal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: auto;
+        background: white;
+        padding: 0;
+        margin: 0;
+      }
+      .modal-content {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 20px;
+        box-shadow: none;
+        border-radius: 0;
+        max-height: none;
+        background: white;
+        color: black;
+      }
+      .close, .reader-controls, .book-link-container {
+        display: none;
+      }
+      .reader-header h2 {
+        font-size: 24pt;
+        text-align: center;
+      }
+      .reader-header p {
+        text-align: center;
+        font-size: 16pt;
+      }
+      .book-content {
+        height: auto;
+        overflow: visible;
+        padding: 0;
+        background: none;
+      }
+      .book-content h3 {
+        font-size: 18pt;
+        color: #000;
+      }
+      .book-content p {
+        font-size: 12pt;
+        margin-bottom: 12pt;
+        color: #000;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Sci-Fi Books</h1>
+    <div class="controls">
+      <input type="text" id="searchBar" placeholder="Search books by title or author...">
+      <button id="toggleTheme">
+        <span>🌙 Dark Mode</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="book-list" id="bookList"></div>
+  </div>
+
+  <!-- Book Reader Modal -->
+  <div id="bookModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div class="reader-header">
+        <h2 id="modalTitle">Book Title</h2>
+        <p id="modalAuthor">Author Name</p>
+      </div>
+      <div class="reader-controls">
+        <button id="printBook" class="btn">
+          <i class="fas fa-print"></i> Print Book
+        </button>
+      </div>
+      <div class="book-content" id="bookContent"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p><center>Sci-Fi Book Library &copy; 2025 | Journey to Distant Worlds</center></p>
+  </footer>
+
+  <script>
+    const books = [
+      {
+        id: "dune",
+        title: "Dune",
+        author: "Frank Herbert",
+        year: 1965,
+        info: "Epic tale of politics, religion, and ecology on a desert planet",
+        link: "https://www.gutenberg.org/ebooks/17989", // Biography link
+        content: `
+          <h3>Book One: Dune</h3>
+          <p>A beginning is the time for taking the most delicate care that the balances are correct. This every sister of the Bene Gesserit knows. To begin your study of the life of Muad'Dib, then, take care that you first place him in his time: born in the 57th year of the Padishah Emperor, Shaddam IV.</p>
+          
+          <h3>The Coming of Muad'Dib</h3>
+          <p>Muad'Dib could indeed see the Future, but you must understand the limits of this power. Think of sight. You have eyes, yet cannot see without light. If you are on the floor of a valley, you cannot see beyond your valley.</p>
+          
+          <h3>Appendix I: The Ecology of Dune</h3>
+          <p>The struggle between life and lifelessness is the theme of the planet Arrakis. To understand the relationship of this planet to the others in the Imperium, one must first appreciate its peculiar ecology.</p>
+        `
+      },
+      {
+        id: "foundation",
+        title: "Foundation",
+        author: "Isaac Asimov",
+        year: 1951,
+        info: "The fall of a galactic empire and the rise of a new society",
+        link: "https://www.gutenberg.org/ebooks/author/208", // Biography link
+        content: `
+          <h3>Part I: The Psychohistorians</h3>
+          <p>His name was Gaal Dornick and he was just a country boy who had never seen Trantor before. That is, not in real life. He had seen it many times on the hyper-video, and occasionally in tremendous three-dimensional newscasts covering an Imperial Coronation or the opening of a Galactic Council.</p>
+          
+          <h3>The Encyclopedists</h3>
+          <p>Terminus was a world which, in the first year of the Foundation Era, knew nothing of the struggles that were to come. It was a world of fifty thousand, all dedicated to the creation of a Galactic Encyclopedia.</p>
+          
+          <h3>The Mayors</h3>
+          <p>Salvor Hardin was the first mayor of Terminus City to be elected by the people. It is perhaps not too far-fetched to assume that the first election was the most significant one.</p>
+        `
+      },
+      {
+        id: "neuromancer",
+        title: "Neuromancer",
+        author: "William Gibson",
+        year: 1984,
+        info: "The novel that defined the cyberpunk genre",
+        link: "https://www.gutenberg.org/ebooks/author/35830", // Biography link
+        content: `
+          <h3>Chapter 1: Chiba City Blues</h3>
+          <p>The sky above the port was the color of television, tuned to a dead channel. "It's not like I'm using," Case heard someone say, as he shouldered his way through the crowd around the door of the Chat. "It's like my body's developed this massive drug deficiency."</p>
+          
+          <h3>Chapter 5: Midnight in the Rue Jules Verne</h3>
+          <p>The Villa Straylight was a singular structure, a mad combination of Gothic cathedral and Victorian railway station. It was built on a massive orbital rock, and its architecture reflected the paranoia of its inhabitants.</p>
+          
+          <h3>Chapter 10: The Winter Market</h3>
+          <p>Winter had come to the Sprawl. Ice glazed the steel and concrete canyons. Case watched the snow fall through the polarized window of his loft. Somewhere out there, the matrix waited, a consensual hallucination.</p>
+        `
+      },
+      {
+        id: "enders-game",
+        title: "Ender's Game",
+        author: "Orson Scott Card",
+        year: 1985,
+        info: "A child prodigy trains to defend Earth from alien invaders",
+        link: "https://www.gutenberg.org/ebooks/author/208", // Biography link
+        content: `
+          <h3>Chapter 1: Third</h3>
+          <p>"I've watched through his eyes, I've listened through his ears, and I tell you he's the one. Or at least as close as we're going to get." "That's what you said about the brother." "The brother tested out impossible. For other reasons."</p>
+          
+          <h3>Chapter 7: Salamander</h3>
+          <p>The battleroom was the center of life in Battle School. Ender floated in the center of the null-gravity chamber, surrounded by stars that weren't stars, enemies that weren't enemies, and a game that wasn't a game.</p>
+          
+          <h3>Chapter 14: Ender's Teacher</h3>
+          <p>"The enemy's gate is down." It was Mazer Rackham's first lesson. It changed everything. Gravity was a weapon, a tool, a perspective. In the battle room, orientation was everything.</p>
+        `
+      },
+      {
+        id: "hyperion",
+        title: "Hyperion",
+        author: "Dan Simmons",
+        year: 1989,
+        info: "Seven pilgrims journey to confront a terrifying creature",
+        link: "https://www.gutenberg.org/ebooks/17989", // Biography link
+        content: `
+          <h3>The Priest's Tale</h3>
+          <p>Father Lenar Hoyt's story began on the world of Pacem, but it ended on Hyperion. He came to the Time Tombs not as a pilgrim, but as a man haunted by the ghost of a priest who had already made the journey.</p>
+          
+          <h3>The Soldier's Tale</h3>
+          <p>Fedmahn Kassad remembered the battles. He remembered the blood and the screams. But what he remembered most vividly was the woman. The woman who appeared in the midst of battle, untouched by the violence around her.</p>
+          
+          <h3>The Scholar's Tale</h3>
+          <p>Sol Weintraub's tragedy was unique. His daughter, Rachel, had touched the Time Tombs and was aging backward. Each day she woke younger than the day before, her memories fading like morning mist.</p>
+        `
+      },
+      {
+        id: "snow-crash",
+        title: "Snow Crash",
+        author: "Neal Stephenson",
+        year: 1992,
+        info: "A futuristic world where information is both virus and weapon",
+        link: "https://www.gutenberg.org/ebooks/author/35830", // Biography link
+        content: `
+          <h3>Chapter 1: The Deliverator</h3>
+          <p>The Deliverator belongs to an elite order, a hallowed subcategory. He's got esprit up to here. Right now, he is preparing to carry out his third mission of the night. His uniform is black as activated charcoal.</p>
+          
+          <h3>Chapter 15: The Metaverse</h3>
+          <p>Hiro Protagonist approaches the Street. It is the Broadway, the Champs Élysées of the Metaverse. It is the brilliantly lit boulevard that can be seen, miniaturized and backward, reflected in the lenses of his goggles.</p>
+          
+          <h3>Chapter 45: The Raft</h3>
+          <p>Floating in the middle of the Pacific, the Raft was a nation of refugees. Hiro watched as the sun set over the recycled plastic islands. Somewhere in this floating city was the answer to Snow Crash.</p>
+        `
+      },
+      {
+        id: "left-hand-darkness",
+        title: "The Left Hand of Darkness",
+        author: "Ursula K. Le Guin",
+        year: 1969,
+        info: "A groundbreaking exploration of gender and society",
+        link: "https://www.gutenberg.org/ebooks/17989", // Biography link
+        content: `
+          <h3>Chapter 1: A Parade in Erhenrang</h3>
+          <p>I'll make my report as if I told a story, for I was taught as a child on my homeworld that Truth is a matter of the imagination. The soundest fact may fail or prevail in the style of its telling.</p>
+          
+          <h3>Chapter 5: The Domestication of Hunch</h3>
+          <p>Genly Ai struggled to understand the Gethenians. They were androgynes, neither male nor female except during kemmer. How could he explain gender to people who experienced it only occasionally?</p>
+          
+          <h3>Chapter 10: On the Ice</h3>
+          <p>The journey across the Gobrin Ice would kill them. Estraven knew it, and Genly knew it. Yet they had no choice. The sledge moved slowly across the endless white, two tiny figures against an ocean of snow.</p>
+        `
+      }
+    ];
+
+    // DOM Elements
+    const searchBar = document.getElementById('searchBar');
+    const toggleTheme = document.getElementById('toggleTheme');
+    const bookList = document.getElementById('bookList');
+    const bookModal = document.getElementById('bookModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalAuthor = document.getElementById('modalAuthor');
+    const bookContent = document.getElementById('bookContent');
+    const closeModal = document.querySelector('.close');
+    const printBook = document.getElementById('printBook');
+    const bookCount = document.getElementById('bookCount');
+
+    // Initialize Library
+    function initLibrary() {
+      bookList.innerHTML = ''; // Clear existing content
+      
+      books.forEach(book => {
+        const bookCard = document.createElement('div');
+        bookCard.className = 'book-card';
+        bookCard.innerHTML = `
+          <div class="book-info">
+            <h3>${book.title}</h3>
+            <p><strong>Author:</strong> ${book.author}</p>
+            <p><strong>Published:</strong> ${book.year}</p>
+            <p>${book.info}</p>
+            <div class="book-actions">
+              <button class="btn read-btn" data-id="${book.id}">
+                <i class="fas fa-book-open"></i> Read Book
+              </button>
+            </div>
+          </div>
+        `;
+        bookList.appendChild(bookCard);
+      });
+
+      // Set initial book count
+      bookCount.textContent = `${books.length} sci-fi books available`;
+
+      // Add event listeners to read buttons
+      addReadButtonListeners();
+    }
+
+    // Add event listeners to read buttons
+    function addReadButtonListeners() {
+      document.querySelectorAll('.read-btn').forEach(button => {
+        button.addEventListener('click', function() {
+          const bookId = this.dataset.id;
+          const book = books.find(b => b.id === bookId);
+          if (book) {
+            openBookModal(book);
+          }
+        });
+      });
+    }
+
+    // Open book modal with content
+    function openBookModal(book) {
+      modalTitle.textContent = book.title;
+      modalAuthor.textContent = `by ${book.author}`;
+      bookContent.innerHTML = `
+        ${book.content}
+        <div class="book-link-container">
+          <a href="${book.link}" target="_blank" class="book-link-btn">
+            <i class="fas fa-external-link-alt"></i>
+            Read the original book
+          </a>
+        </div>
+      `;
+      bookModal.style.display = 'block';
+    }
+
+    // Close Modal
+    closeModal.addEventListener('click', () => {
+      bookModal.style.display = 'none';
+    });
+
+    // Close Modal when clicking outside
+    window.addEventListener('click', (e) => {
+      if (e.target === bookModal) {
+        bookModal.style.display = 'none';
+      }
+    });
+
+    // Print Book
+    printBook.addEventListener('click', () => {
+      window.print();
+    });
+
+    // Theme Toggle
+    toggleTheme.addEventListener('click', function() {
+      document.body.classList.toggle('dark-mode');
+      this.querySelector('span').textContent = 
+        document.body.classList.contains('dark-mode') ? 
+        '☀️ Light Mode' : '🌙 Dark Mode';
+    });
+
+    // Search Functionality
+    searchBar.addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      const bookCards = document.querySelectorAll('.book-card');
+      let visibleCount = 0;
+      
+      bookCards.forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        const author = card.querySelector('p').textContent.toLowerCase();
+        const isVisible = title.includes(query) || author.includes(query);
+        
+        card.style.display = isVisible ? 'block' : 'none';
+        if (isVisible) visibleCount++;
+      });
+      
+      bookCount.textContent = `${visibleCount} book${visibleCount !== 1 ? 's' : ''} found`;
+    });
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', initLibrary);
+  </script>
+</body>
+</html>

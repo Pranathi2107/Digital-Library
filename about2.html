@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - eBookNest Digital Library</title>
+    <style>
+        body {
+            font-family: 'Lora', serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #a2c0c7, #d0e4ea);
+            color: #222;
+            transition: background 0.3s, color 0.3s; /* Added for dark mode transition */
+        }
+
+        .shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .shape {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(0, 169, 157, 0.2);
+            animation: floatShape 15s linear infinite;
+        }
+
+        @keyframes floatShape {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-120vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Styles copied from main.html for consistent header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            font-size: 20px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: #00a99d;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img.icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo h1 {
+            margin: 0;
+            font-size: 34px;
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background-color: white;
+            color: #333;
+        }
+
+        .toggle-btn {
+            background: white;
+            color: #00a99d;
+            border: none;
+            border-radius: 5px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .toggle-btn:hover {
+            background: #007f78;
+            color: white;
+        }
+
+        /* Dark mode styles copied from main.html */
+        .dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+
+        .dark-mode header {
+            background-color: #11b8be;
+        }
+
+        .dark-mode .logo h1 { /* Ensure logo text changes color too */
+            color: #e0e0e0;
+        }
+
+        .dark-mode nav a {
+            color: #e0e0e0;
+        }
+
+        .dark-mode nav a:hover {
+            background-color: #e0e0e0;
+            color: #121212;
+        }
+
+        .dark-mode .toggle-btn {
+            background-color: #e0e0e0;
+            color: #121212;
+        }
+
+        .dark-mode .shape {
+            color: rgba(74, 26, 232, 0.616);
+        }
+
+        /* Specific styles for About Us page content */
+        .about-us-title {
+            text-align: center;
+            font-size: 2.5em;
+            margin: 40px auto 20px; /* Added margin for spacing */
+            color: #008080;
+            text-shadow: 1px 1px 2px #ddd;
+            max-width: 800px;
+        }
+
+        .about-container {
+            background-color: #f3f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 800px; /* Increased max-width for content */
+            margin: 20px auto;
+            border-left: 8px solid #00b3a4;
+            box-shadow:
+                -3px 0 10px rgba(0, 179, 164, 0.3),
+                0 4px 12px rgba(0, 0, 0, 0.2);
+            line-height: 1.6;
+            font-size: 1.1em;
+        }
+
+        .about-container h2 {
+            color: #008080;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .about-container p {
+            margin-bottom: 15px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #e3f0f3;
+            color: #555;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px 20px;
+            }
+            nav {
+                margin-top: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .about-us-title,
+            .about-container {
+                margin-left: 20px;
+                margin-right: 20px;
+                padding: 20px;
+            }
+        }
+
+        /* Dark mode specific for about content */
+        .dark-mode .about-us-title {
+            color: #11b8be;
+            text-shadow: none;
+        }
+        .dark-mode .about-container {
+            background-color: #1e1e1e;
+            border-left-color: #11b8be;
+            box-shadow:
+                -3px 0 10px rgba(17, 184, 190, 0.3),
+                0 4px 12px rgba(0, 0, 0, 0.5);
+            color: #e0e0e0;
+        }
+        .dark-mode .about-container h2 {
+            color: #11b8be;
+        }
+        .dark-mode footer {
+            background-color: #2a2a2a;
+            color: #bbb;
+        }
+    </style>
+</head>
+<body>
+    <div class="shapes" id="shapes-container"></div>
+
+    <header>
+        <div class="logo">
+            <img src="images/Library icon-Photoroom.png" class="icon" />
+            <h1>eBookNest</h1>
+        </div>
+
+        <nav>
+            <a href="main.html">Home</a>
+            <a href="about2.html">About</a>
+            <a href="contact trail.html">Contact Us</a>
+ <a href="reviews.html">Reviews</a>
+
+            <a href="Loginnew.html">Login</a>
+            <button class="toggle-btn" onclick="toggleDarkMode()">🌙Dark</button>
+        </nav>
+    </header>
+
+    <main>
+        <h1 class="about-us-title">About eBookNest Digital Library</h1>
+
+        <div class="about-container">
+            <p>Welcome to **eBookNest**, your premier online destination for a vast collection of digital literature. We are passionate about making knowledge and stories accessible to everyone, everywhere.</p>
+
+            <h2>Our Mission</h2>
+            <p>Our mission is to foster a love for reading and continuous learning by providing a user-friendly platform with a diverse range of eBooks, articles, journals, and other digital resources. We believe in breaking down barriers to information and empowering individuals through education and entertainment.</p>
+
+            <h2>What We Offer</h2>
+            <ul>
+                <li>**Extensive Collection:** From classic literature to contemporary bestsellers, academic journals to engaging non-fiction, our library is constantly growing.</li>
+                <li>**24/7 Accessibility:** Access your favorite reads anytime, anywhere, from any device with an internet connection.</li>
+                <li>**User-Friendly Interface:** Our platform is designed for intuitive navigation, making it easy to find, read, and organize your digital content.</li>
+                <li>**Community and Support:** We strive to build a community of readers and learners, offering support and resources to enhance your experience.</li>
+            </ul>
+
+            <h2>Our Vision</h2>
+            <p>We envision a future where digital libraries are central to lifelong learning and cultural enrichment. eBookNest aims to be at the forefront of this movement, continuously innovating to provide an unparalleled digital reading experience.</p>
+
+            <p>Thank you for choosing eBookNest. We hope you enjoy exploring the world of knowledge with us!</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 eBookNest Digital Library. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Dark mode toggle function
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+        }
+
+        // Floating shapes script
+        const shapesContainer = document.getElementById("shapes-container");
+        const icon = "📚"; // Changed icon slightly for variety, you can use "📘" or any other.
+
+        for (let i = 0; i < 30; i++) {
+            const shape = document.createElement("div");
+            shape.classList.add("shape");
+            shape.innerText = icon;
+            shape.style.left = Math.random() * 100 + "%";
+            shape.style.top = Math.random() * 100 + 50 + "%";
+            shape.style.fontSize = Math.random() * 20 + 20 + "px";
+            shape.style.animationDuration = (Math.random() * 10 + 10) + "s";
+            shapesContainer.appendChild(shape);
+        }
+    </script>
+</body>
+</html>

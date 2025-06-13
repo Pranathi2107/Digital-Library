@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Learn More - Digital Library</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lora', serif;
+            background-color: #fafafa;
+            margin: 0;
+            padding: 40px 20px;
+            color: #333;
+        }
+        .info-card {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            border-left: 8px solid #00a99d;
+            padding: 30px 40px 30px 30px;
+            border-radius: 8px;
+            box-shadow: 
+                -4px 0 10px rgba(0, 169, 157, 0.3),
+                0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #00a99d;
+            font-size: 2.8rem;
+            margin-top: 0;
+            margin-bottom: 0.5em;
+        }
+        h2 {
+            color: #007a73;
+            font-size: 1.8rem;
+            margin-top: 0;
+            margin-bottom: 1em;
+            border-right: .1em solid #00a99d;
+            white-space: nowrap;
+            overflow: hidden;
+            animation:
+                typing 3s steps(40, end),
+                blink-caret .75s step-end infinite;
+        }
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 1.2em;
+            color: #444;
+        }
+        button.readMoreBtn {
+            background-color: #00a99d;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+        button.readMoreBtn:hover {
+            background-color: #007f78;
+        }
+        #scrollBtn {
+            display: none;
+            position: fixed;
+            bottom: 40px;
+            right: 30px;
+            z-index: 99;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: #00a99d;
+            color: white;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        #scrollBtn:hover {
+            background-color: #007f78;
+        }
+        #moreText {
+            display: none;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #00a99d; }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 20px 10px;
+            }
+            .info-card {
+                padding: 20px 20px 20px 20px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.4rem;
+                animation: none; /* Optional: disable typing effect on small screens */
+                border-right: none;
+            }
+            p {
+                font-size: 1rem;
+            }
+            button.readMoreBtn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="info-card">
+    <h1>Additional information</h1>
+    <h2 class="typing">Why Choose Our Digital Library?</h2>
+    <p>
+        Our digital library is more than just an online collection of books—it's your gateway to a universe of knowledge
+        <span id="dots">...</span>
+        <span id="moreText">
+            With 24/7 access, a user-friendly interface, and thousands of titles across genres, our platform ensures you’re always just a click away from learning something new.
+            Whether you're a student, a curious reader, or a researcher, we provide resources that inform, inspire, and empower.
+            Explore articles, eBooks, audiobooks, and curated reading lists designed to enrich your journey.
+            With advanced search, personalized book shelves, and constant updates, we bring the library to your fingertips.
+            <br><br>
+            <b>Cost-Effective and Space-Saving:</b> Maintaining a digital library can be more cost-effective than a physical one, as it reduces expenses related to physical storage, maintenance, and staffing. Additionally, digital libraries eliminate the need for large physical spaces, making them ideal for institutions with limited infrastructure.
+            <br><br>
+            <b>Simultaneous Multi-User Access:</b> Unlike traditional libraries where a single copy of a book can be used by one person at a time, digital libraries allow multiple users to access the same resource simultaneously. This feature is particularly beneficial for academic institutions where multiple students might need the same material concurrently.
+        </span>
+    </p>
+    <button class="readMoreBtn" onclick="toggleReadMore()">Read More</button>
+</div>
+
+<button onclick="scrollToTop()" id="scrollBtn" title="Go to top">↑</button>
+
+<script>
+    function toggleReadMore() {
+        var dots = document.getElementById("dots");
+        var moreText = document.getElementById("moreText");
+        var btnText = event.target;
+
+        if (dots.style.display === "none") {
+            dots.style.display = "inline";
+            btnText.innerHTML = "Read More";
+            moreText.style.display = "none";
+        } else {
+            dots.style.display = "none";
+            btnText.innerHTML = "Show Less";
+            moreText.style.display = "inline";
+        }
+    }
+
+    const scrollBtn = document.getElementById("scrollBtn");
+
+    window.onscroll = function () {
+        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+            scrollBtn.style.display = "block";
+        } else {
+            scrollBtn.style.display = "none";
+        }
+    };
+
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Science Books</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        /* --- Root Variables for Theming --- */
+        :root {
+            --primary: #3498db;
+            --secondary: #23bfb2; /* This is the original header color for Science Books */
+            --success: #27ae60;
+            --light: #f8f9fa;
+            --dark: #121212;
+            --text: #333;
+            --text-light: #e0e0e0;
+            --card-bg: #ecf0f1;
+            --modal-bg: #ffffff;
+            --content-bg: #f4f4f4;
+            --main-nav-bg: #00a99d; /* Color from main.html header */
+            --main-nav-dark-bg: #11b8be; /* Dark mode color from main.html header */
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            background-color: var(--light);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* --- Styles for the animated shapes background (from main.html) --- */
+        .shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .shape {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(0, 169, 157, 0.2); /* Default light mode color for shapes */
+            animation: floatShape 15s linear infinite;
+        }
+
+        @keyframes floatShape {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-120vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* --- Main Header styles (from main.html, adapted) --- */
+        .main-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            font-size: 20px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: var(--main-nav-bg);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img.icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo h1 {
+            margin: 0;
+            font-size: 34px;
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background-color: white;
+            color: var(--main-nav-bg);
+        }
+
+        .toggle-btn {
+            background: white;
+            color: var(--main-nav-bg);
+            border: none;
+            border-radius: 5px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background: #007f78;
+            color: white;
+        }
+
+        /* --- Page-specific Header styles (retained and adjusted) --- */
+        .page-title-header { /* Added class to differentiate from main nav header */
+            background: var(--secondary); /* Original Science Books header background */
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 0; /* Ensures it's flush with the sticky nav */
+        }
+
+        .page-title-header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .book-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .book-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, background 0.3s, color 0.3s;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .book-card h3 {
+            margin-bottom: 0.5rem;
+            color: #2c3e50; /* Specific color for h3 in light mode */
+        }
+
+        .book-card p {
+            margin: 0.3rem 0;
+            font-size: 0.95rem;
+            color: var(--text); /* Uses root variable */
+        }
+
+        .btn {
+            margin-top: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: var(--modal-bg);
+            margin: 3% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 35px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #ff0000;
+        }
+
+        .reader-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--text); /* Uses root variable */
+        }
+
+        .reader-header p {
+            color: #666; /* Specific color for reader header p in light mode */
+            font-style: italic;
+        }
+
+        .reader-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin: 1rem 0;
+        }
+
+        .reader-controls .btn {
+            background: var(--success);
+        }
+
+        .reader-controls .btn:hover {
+            background: #219653;
+        }
+
+        .book-content {
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: var(--content-bg);
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text); /* Uses root variable */
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .book-content h3 {
+            color: var(--secondary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .book-content p {
+            margin-bottom: 1rem;
+        }
+
+        .book-link-container {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .book-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--success);
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .book-link-btn:hover {
+            background: #219653;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* --- Page-specific controls (search and theme toggle) --- */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            width: 100%;
+        }
+
+        #searchBar {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            width: 60%;
+            max-width: 500px;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease, background 0.3s, color 0.3s;
+        }
+
+        #searchBar:focus {
+            outline: none;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        #toggleTheme { /* This is the page-specific toggle, distinct from main-nav toggle-btn */
+            background: var(--primary); /* Original Science Books header background */
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #toggleTheme:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .book-count {
+            text-align: center;
+            margin: 1rem 0 2rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #555;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            background: rgba(0, 0, 0, 0.03);
+            color: #666;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* --- Dark mode styles (merged and adapted) --- */
+        body.dark-mode {
+            background-color: var(--dark);
+            color: var(--text-light);
+            --card-bg: #1e1e1e;
+            --modal-bg: #252525;
+            --content-bg: #2d2d2d;
+            --text: #e0e0e0; /* Override default text color for dark mode */
+        }
+
+        .dark-mode .main-header {
+            background-color: var(--main-nav-dark-bg);
+        }
+
+        .dark-mode nav a {
+            color: var(--text-light);
+        }
+
+        .dark-mode nav a:hover {
+            background-color: var(--text-light);
+            color: var(--dark);
+        }
+
+        .dark-mode .toggle-btn {
+            background-color: var(--text-light);
+            color: var(--dark);
+        }
+
+        .dark-mode .toggle-btn:hover {
+            background-color: #007f78; /* Match main nav hover in dark mode */
+            color: white;
+        }
+
+        .dark-mode .shape {
+            color: rgba(74, 26, 232, 0.616); /* Dark mode shape color */
+        }
+
+        .dark-mode .page-title-header {
+             background: #007f78; /* Darker shade for secondary header in dark mode */
+        }
+
+        .dark-mode .book-card {
+            background: var(--card-bg);
+        }
+
+        .dark-mode .book-card h3 {
+            color: var(--text-light); /* Ensure h3 is light in dark mode */
+        }
+        .dark-mode .book-card p {
+            color: var(--text);
+        }
+
+        .dark-mode .modal-content {
+            background-color: var(--modal-bg);
+        }
+
+        .dark-mode .reader-header h2 {
+            color: var(--text);
+        }
+        .dark-mode .reader-header p {
+            color: #ccc; /* Ensure p is light in dark mode modal header */
+        }
+
+
+        .dark-mode .book-content {
+            background: var(--content-bg);
+        }
+
+        .dark-mode #searchBar {
+            background-color: #333a44;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+
+        .dark-mode #toggleTheme {
+            background: #007f78; /* Darker shade for page-specific toggle in dark mode */
+            color: var(--text-light);
+        }
+        .dark-mode #toggleTheme:hover {
+            background: #005f5a; /* Even darker on hover */
+        }
+
+        .dark-mode footer {
+            background: rgba(255, 255, 255, 0.05);
+            color: #aaa;
+        }
+
+        /* --- Responsive adjustments (merged and adapted) --- */
+        @media (max-width: 768px) {
+            .main-header {
+                flex-direction: column;
+                align-items: center;
+                padding: 15px 20px;
+            }
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-top: 15px;
+                gap: 10px;
+            }
+            .logo h1 {
+                font-size: 28px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #searchBar {
+                width: 90%;
+            }
+
+            .book-list {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .modal, .modal * {
+                visibility: visible;
+            }
+            .modal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: auto;
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .modal-content {
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                padding: 20px;
+                box-shadow: none;
+                border-radius: 0;
+                max-height: none;
+                background: white;
+                color: black; /* Ensure text is black for print */
+            }
+            .close, .reader-controls, .reader-header p, .book-link-container {
+                display: none;
+            }
+            .reader-header h2 {
+                font-size: 24pt;
+                text-align: center;
+            }
+            .book-content {
+                height: auto;
+                overflow: visible;
+                padding: 0;
+                background: none;
+            }
+            .book-content p {
+                font-size: 12pt;
+                margin-bottom: 12pt;
+                color: black; /* Ensure text is black for print */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shapes" id="shapes-container"></div>
+
+    <header class="main-header">
+        <div class="logo">
+            <img src="images/Library icon-Photoroom.png" class="icon" alt="Library Icon" />
+            <h1>eBookNest</h1>
+        </div>
+
+        <nav>
+            <a href="main.html">Home</a>
+            <a href="home trial.html">dashboard</a>
+            <a href="about2.html">About</a>
+            <a href="contact trail.html">Contact Us</a>
+            <a href="reviews.html">Popular Books</a>
+            <a href="Loginnew.html">Login</a>
+            <button class="toggle-btn" onclick="toggleMainDarkMode()">🌙Dark</button>
+        </nav>
+    </header>
+
+    <header class="page-title-header">
+        <h1>Science Books</h1>
+        <div class="controls">
+            <input type="text" id="searchBar" placeholder="Search books by title or author...">
+            <button id="toggleTheme">
+                <span>🌙 Dark Mode</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="book-count" id="bookCount"></div>
+        <div class="book-list" id="bookList"></div>
+    </div>
+
+    <div id="bookModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="reader-header">
+                <h2 id="modalTitle">Book Title</h2>
+                <p id="modalAuthor">Author Name</p>
+            </div>
+            <div class="reader-controls">
+                <button id="printBook" class="btn">
+                    <i class="fas fa-print"></i> Print Book
+                </button>
+            </div>
+            <div class="book-content" id="bookContent"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p><center>Science Book Library &copy; 2025 | Explore the Universe Through Knowledge</center></p>
+    </footer>
+
+    <script>
+        const books = [
+            {
+                id: "candle",
+                title: "The Chemical History of a Candle",
+                author: "Michael Faraday",
+                year: 1861,
+                info: "A series of lectures on the chemistry and physics of flames",
+                link: "https://www.gutenberg.org/ebooks/14474",
+                content: `
+                    <h3>Lecture I: A Candle: The Flame</h3>
+                    <p>There is not a law under which any part of this universe is governed which does not come into play and is touched upon in these phenomena. There is no better, there is no more open door by which you can enter into the study of natural philosophy than by considering the physical phenomena of a candle.</p>
+                    <p>I have taken this subject on a former occasion; and were it left to my own will, I should prefer to repeat it almost every year—so abundant is the interest that attaches itself to the subject, so wonderful are the varieties of outlet which it offers into the various departments of philosophy.</p>
+                    
+                    <h3>Lecture II: Brightness of the Flame</h3>
+                    <p>Air is absolutely necessary for combustion; and, what is more, I must have you understand that fresh air is necessary, or else the flame would become dim and the combustion imperfect.</p>
+                    <p>You will soon see that the flame of the candle is oblong because the air that feeds it sweeps obliquely against it. The reason is that the current of hot air ascends vertically, while the cold air which feeds the flame comes in from the sides.</p>
+                    
+                    <h3>Lecture III: Products of Combustion</h3>
+                    <p>We find that the candle produces water and carbonic acid. Where does it get its hydrogen? From the candle. Where does it get the carbon? From the candle. And where does it get the oxygen? From the air.</p>
+                    <p>Thus we have a most beautiful illustration of the general law of the conservation of matter. Nothing is lost; the weight of the products is equal to the weight of the substances that have been used.</p>
+                `
+            },
+            {
+                id: "origin",
+                title: "On the Origin of Species",
+                author: "Charles Darwin",
+                year: 1859,
+                info: "The foundation of evolutionary biology",
+                link: "https://www.gutenberg.org/ebooks/2009",
+                content: `
+                    <h3>Chapter I: Variation Under Domestication</h3>
+                    <p>When we look to the individuals of the same variety or sub-variety of our older cultivated plants and animals, one of the first points which strikes us, is, that they generally differ much more from each other, than do the individuals of any one species or variety in a state of nature.</p>
+                    <p>I think it must be obvious that we have in this chapter discussed a subject of the highest importance. The preservation of the most divergent variations will lead in the long run to the formation of new varieties and species.</p>
+                    
+                    <h3>Chapter IV: Natural Selection</h3>
+                    <p>How will the struggle for existence, discussed too briefly in the last chapter, act in regard to variation? Can the principle of selection, which we have seen is so potent in the hands of man, apply in nature?</p>
+                    <p>If under changing conditions of life organic beings present individual differences in almost every part of their structure, and this cannot be disputed; if there be, owing to their geometrical rate of increase, a severe struggle for life at some age, season, or year, and this certainly cannot be disputed; then, considering the infinite complexity of the relations of all organic beings to each other and to their conditions of existence, causing an infinite diversity in structure, constitution, and habits, to be advantageous to them, I think it would be a most extraordinary fact if no variation ever had occurred useful to each being's own welfare.</p>
+                    
+                    <h3>Chapter XIV: Recapitulation and Conclusion</h3>
+                    <p>As this whole volume is one long argument, it may be convenient to the reader to have the leading facts and inferences briefly recapitulated.</p>
+                    <p>I have now recapitulated the chief facts and considerations which have thoroughly convinced me that species have changed, and are still slowly changing by the preservation and accumulation of successive slight favourable variations.</p>
+                `
+            },
+            {
+                id: "relativity",
+                title: "Relativity: The Special and General Theory",
+                author: "Albert Einstein",
+                year: 1916,
+                info: "Einstein's own explanation of his revolutionary theories",
+                link: "https://www.gutenberg.org/ebooks/5001",
+                content: `
+                    <h3>Part I: The Special Theory of Relativity</h3>
+                    <p>The theory of relativity is intimately connected with the theory of space and time. I shall therefore begin with a brief investigation of the origin of our ideas of space and time.</p>
+                    <p>We might certainly suppose that there exists an infinite number of spaces which are moving relatively to each other. The concept of motion does not exist with respect to space taken by itself. In order to be able to speak of the motion of space, we must think of it as embedded in a space of a higher dimension.</p>
+                    
+                    <h3>Part II: The General Theory of Relativity</h3>
+                    <p>We are now in a position to replace the provisional formulation of the general principle of relativity given in Section 18 by an exact formulation. The form in which it was presented there, "All bodies of reference are equivalent for the description of natural phenomena," is obviously untenable in this form.</p>
+                    <p>The principle of the constancy of the velocity of light in vacuo must be modified according to the general theory of relativity. It then becomes: Light is propagated in curvilinear paths in gravitational fields where the gravitational field is to be regarded as a modification of the metrical properties of space.</p>
+                    
+                    <h3>Part III: Considerations on the Universe as a Whole</h3>
+                    <p>Is the universe finite or infinite? Our experience is far from being sufficient to enable us to answer this question. But the general theory of relativity permits of our answering it with a moderate degree of certainty.</p>
+                    <p>The non-mathematician is seized by a mysterious shuddering when he hears of "four-dimensional" things, by a feeling not unlike that awakened by thoughts of the occult. And yet there is no more common-place statement than that the world in which we live is a four-dimensional space-time continuum.</p>
+                `
+            },
+            {
+                id: "beagle",
+                title: "The Voyage of the Beagle",
+                author: "Charles Darwin",
+                year: 1839,
+                info: "Darwin's journal from his historic voyage",
+                link: "https://www.gutenberg.org/ebooks/3704",
+                content: `
+                    <h3>Chapter I: St. Jago—Cape de Verde Islands</h3>
+                    <p>After having been twice driven back by heavy southwestern gales, Her Majesty's ship Beagle, a ten-gun brig, under the command of Captain Fitz Roy, R. N., sailed from Devonport on the 27th of December, 1831. The object of the expedition was to complete the survey of Patagonia and Tierra del Fuego, commenced under Captain King in 1826 to 1830—to survey the shores of Chile, Peru, and of some islands in the Pacific—and to carry a chain of chronometrical measurements round the World.</p>
+                    
+                    <h3>Chapter IX: Santa Cruz, Patagonia, and the Falkland Islands</h3>
+                    <p>The Beagle anchored within the mouth of the Santa Cruz. This river is situated about sixty miles south of Port St. Julian. During the last voyage Captain Stokes proceeded thirty miles up it, but then, from the want of provisions, was obliged to return.</p>
+                    <p>The geology of Patagonia is interesting. Differently from Europe, where the tertiary formations appear to have accumulated in bays, here along hundreds of miles of coast we have one great deposit, including many tertiary shells, all apparently extinct. The most common shell is a massive gigantic oyster, sometimes even a foot in diameter.</p>
+                    
+                    <h3>Chapter XVII: Galapagos Archipelago</h3>
+                    <p>The natural history of these islands is eminently curious, and well deserves attention. Most of the organic productions are aboriginal creations, found nowhere else; there is even a difference between the inhabitants of the different islands; yet all show a marked relationship with those of America, though separated from that continent by an open space of ocean, between 500 and 600 miles in width.</p>
+                    <p>The archipelago is a little world within itself, or rather a satellite attached to America, whence it has derived a few stray colonists, and has received the general character of its indigenous productions.</p>
+                `
+            },
+            {
+                id: "brief-history",
+                title: "A Brief History of Time",
+                author: "Stephen Hawking",
+                year: 1988,
+                info: "Exploring the nature of the universe",
+                link: "https://en.wikipedia.org/wiki/A_Brief_History_of_Time",
+                content: `
+                    <h3>Chapter 1: Our Picture of the Universe</h3>
+                    <p>A well-known scientist (some say it was Bertrand Russell) once gave a public lecture on astronomy. He described how the earth orbits around the sun and how the sun, in turn, orbits around the center of a vast collection of stars called our galaxy.</p>
+                    <p>At the end of the lecture, a little old lady at the back of the room got up and said: "What you have told us is rubbish. The world is really a flat plate supported on the back of a giant tortoise." The scientist gave a superior smile before replying, "What is the tortoise standing on?" "You're very clever, young man, very clever," said the old lady. "But it's turtles all the way down!"</p>
+                    
+                    <h3>Chapter 4: The Uncertainty Principle</h3>
+                    <p>The uncertainty principle, as Heisenberg's discovery is now known, is a fundamental, inescapable property of the world. The uncertainty principle signaled an end to Laplace's dream of a theory of science, a model of the universe that would be completely deterministic: one certainly cannot predict future events exactly if one cannot even measure the present state of the universe precisely!</p>
+                    
+                    <h3>Chapter 8: The Origin and Fate of the Universe</h3>
+                    <p>Why did the universe start out with so nearly the critical rate of expansion that separates models that recollapse from those that go on expanding forever, that even now, ten thousand million years later, it is still expanding at nearly the critical rate? If the rate of expansion one second after the big bang had been smaller by even one part in a hundred thousand million million, the universe would have recollapsed before it ever reached its present size.</p>
+                `
+            },
+            {
+                id: "selfish-gene",
+                title: "The Selfish Gene",
+                author: "Richard Dawkins",
+                year: 1976,
+                info: "Revolutionary perspective on evolution",
+                link: "https://en.wikipedia.org/wiki/The_Selfish_Gene",
+                content: `
+                    <h3>Chapter 1: Why are people?</h3>
+                    <p>Intelligent life on a planet comes of age when it first works out the reason for its own existence. If superior creatures from space ever visit earth, the first question they will ask, in order to assess the level of our civilization, is: "Have they discovered evolution yet?"</p>
+                    <p>Living organisms had existed on earth, without ever knowing why, for over three thousand million years before the truth finally dawned on one of them. His name was Charles Darwin.</p>
+                    
+                    <h3>Chapter 4: The Gene Machine</h3>
+                    <p>We are survival machines—robot vehicles blindly programmed to preserve the selfish molecules known as genes. This is a truth which still fills me with astonishment.</p>
+                    <p>Now they swarm in huge colonies, safe inside gigantic lumbering robots, sealed off from the outside world, communicating with it by tortuous indirect routes, manipulating it by remote control. They are in you and in me; they created us, body and mind; and their preservation is the ultimate rationale for our existence.</p>
+                    
+                    <h3>Chapter 11: Memes: The New Replicators</h3>
+                    <p>I think that a new kind of replicator has recently emerged on this very planet. It is staring us in the face. It is still in its infancy, still drifting clumsily about in its primeval soup, but already it is achieving evolutionary change at a rate that leaves the old gene panting far behind.</p>
+                    <p>The new soup is the soup of human culture. We need a name for the new replicator, a noun that conveys the idea of a unit of cultural transmission, or a unit of imitation. 'Mimeme' comes from a suitable Greek root, but I want a monosyllable that sounds a bit like 'gene'. I hope my classicist friends will forgive me if I abbreviate mimeme to meme.</p>
+                `
+            },
+            {
+                id: "cosmos",
+                title: "Cosmos",
+                author: "Carl Sagan",
+                year: 1980,
+                info: "A journey through space and time",
+                link: "https://en.wikipedia.org/wiki/Cosmos_(Sagan_book)",
+                content: `
+                    <h3>Chapter 1: The Shores of the Cosmic Ocean</h3>
+                    <p>The cosmos is all that is or ever was or ever will be. Our feeblest contemplations of the Cosmos stir us—there is a tingling in the spine, a catch in the voice, a faint sensation, as if a distant memory, of falling from a height. We know we are approaching the greatest of mysteries.</p>
+                    <p>The size and age of the Cosmos are beyond ordinary human understanding. Lost somewhere between immensity and eternity is our tiny planetary home. In a cosmic perspective, most human concerns seem insignificant, even petty. And yet our species is young and curious and brave and shows much promise.</p>
+                    
+                    <h3>Chapter 7: The Backbone of Night</h3>
+                    <p>The Milky Way is a galaxy, a collection of exquisitely beautiful suns, a stellar system in which our Sun is immersed. From our position inside the Milky Way we cannot see clearly its spiral form, its extent or our location within it, any more than we can see the shape of the forest when we are lost in its midst.</p>
+                    <p>But at night, from a dark location, we can see part of the Milky Way as a great arch of light across the sky. In the summer sky, from the northern hemisphere, the Milky Way passes through Cassiopeia, Cepheus, Cygnus, Aquila and Sagittarius.</p>
+                    
+                    <h3>Chapter 13: Who Speaks for Earth?</h3>
+                    <p>We have considered the destruction of worlds and the end of civilizations. But there is another perspective by which we may measure our endeavors. The Cosmos may be densely populated with intelligent beings. But the Darwinian lesson is clear: There will be no humans elsewhere. Only here. Only on this small planet. We are a rare as well as an endangered species.</p>
+                    <p>Every one of us is precious in the cosmic perspective. If a human disagrees with you, let him live. In a hundred billion galaxies, you will not find another.</p>
+                `
+            }
+        ];
+
+        // DOM Elements
+        const searchBar = document.getElementById('searchBar');
+        const toggleTheme = document.getElementById('toggleTheme'); // Page-specific theme toggle
+        const bookList = document.getElementById('bookList');
+        const bookModal = document.getElementById('bookModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalAuthor = document.getElementById('modalAuthor');
+        const bookContent = document.getElementById('bookContent');
+        const closeModal = document.querySelector('.close');
+        const printBook = document.getElementById('printBook');
+        const bookCount = document.getElementById('bookCount'); // Ensure this element exists in your HTML
+
+        // Animated background shapes (from main.html)
+        const shapesContainer = document.getElementById("shapes-container");
+        const icon = "🔬"; // You can change this icon for Science Books
+
+        if (shapesContainer) {
+            for (let i = 0; i < 30; i++) {
+                const shape = document.createElement("div");
+                shape.classList.add("shape");
+                shape.innerText = icon;
+                shape.style.left = Math.random() * 100 + "%";
+                shape.style.top = Math.random() * 100 + 50 + "%";
+                shape.style.fontSize = Math.random() * 20 + 20 + "px";
+                shape.style.animationDuration = (Math.random() * 10 + 10) + "s";
+                shapesContainer.appendChild(shape);
+            }
+        }
+
+        // Toggle dark mode function for main navigation (from main.html)
+        function toggleMainDarkMode() {
+            document.body.classList.toggle("dark-mode");
+            // Update toggle button text for the main nav button
+            const mainNavToggleButton = document.querySelector('.main-header .toggle-btn');
+            if (mainNavToggleButton) {
+                mainNavToggleButton.textContent = document.body.classList.contains('dark-mode') ? '💡Light' : '🌙Dark';
+            }
+            // Also update the page-specific toggle button text
+            updatePageToggleButtonText();
+        }
+
+        // Function to update the text of the page-specific theme toggle button
+        function updatePageToggleButtonText() {
+            if (toggleTheme) {
+                toggleTheme.querySelector('span').textContent =
+                    document.body.classList.contains('dark-mode') ?
+                    '☀️ Light Mode' : '🌙 Dark Mode';
+            }
+        }
+
+        // Initialize Library
+        function initLibrary() {
+            bookList.innerHTML = ''; // Clear existing content
+            
+            books.forEach(book => {
+                const bookCard = document.createElement('div');
+                bookCard.className = 'book-card';
+                bookCard.innerHTML = `
+                    <div class="book-info">
+                        <h3>${book.title}</h3>
+                        <p><strong>Author:</strong> ${book.author}</p>
+                        <p><strong>Published:</strong> ${book.year}</p>
+                        <p>${book.info}</p>
+                        <div class="book-actions">
+                            <button class="btn read-btn" data-id="${book.id}">
+                                <i class="fas fa-book-open"></i> Read Book
+                            </button>
+                        </div>
+                    </div>
+                `;
+                bookList.appendChild(bookCard);
+            });
+
+            // Set initial book count (added for consistency, assumes bookCount element exists)
+            if (bookCount) {
+                bookCount.textContent = `${books.length} science book${books.length !== 1 ? 's' : ''} available`;
+            }
+
+            // Add event listeners to read buttons
+            addReadButtonListeners();
+        }
+
+        // Add event listeners to read buttons
+        function addReadButtonListeners() {
+            document.querySelectorAll('.read-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const bookId = this.dataset.id;
+                    const book = books.find(b => b.id === bookId);
+                    if (book) {
+                        openBookModal(book);
+                    }
+                });
+            });
+        }
+
+        // Open book modal with content
+        function openBookModal(book) {
+            modalTitle.textContent = book.title;
+            modalAuthor.textContent = `by ${book.author}`;
+            bookContent.innerHTML = `
+                ${book.content}
+                <div class="book-link-container">
+                    <a href="${book.link}" target="_blank" class="book-link-btn">
+                        <i class="fas fa-external-link-alt"></i>
+                        Read the original book
+                    </a>
+                </div>
+            `;
+            bookModal.style.display = 'block';
+        }
+
+        // Close Modal
+        closeModal.addEventListener('click', () => {
+            bookModal.style.display = 'none';
+        });
+
+        // Close Modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === bookModal) {
+                bookModal.style.display = 'none';
+            }
+        });
+
+        // Print Book
+        printBook.addEventListener('click', () => {
+            window.print();
+        });
+
+        // Page-specific Theme Toggle
+        toggleTheme.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            // Update the text for both the page-specific button and the main nav button
+            updatePageToggleButtonText();
+            const mainNavToggleButton = document.querySelector('.main-header .toggle-btn');
+            if (mainNavToggleButton) {
+                mainNavToggleButton.textContent = document.body.classList.contains('dark-mode') ? '💡Light' : '🌙Dark';
+            }
+        });
+
+        // Search Functionality
+        searchBar.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const bookCards = document.querySelectorAll('.book-card');
+            let visibleCount = 0;
+            
+            bookCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const author = card.querySelector('p').textContent.toLowerCase();
+                const isVisible = title.includes(query) || author.includes(query);
+                
+                card.style.display = isVisible ? 'block' : 'none';
+                if (isVisible) visibleCount++;
+            });
+            
+            if (bookCount) { // Ensure bookCount element exists before updating
+                bookCount.textContent = `${visibleCount} book${visibleCount !== 1 ? 's' : ''} found`;
+            }
+        });
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set initial text for both toggle buttons based on body class
+            const mainNavToggleButton = document.querySelector('.main-header .toggle-btn');
+            if (mainNavToggleButton) {
+                mainNavToggleButton.textContent = document.body.classList.contains('dark-mode') ? '💡Light' : '🌙Dark';
+            }
+            updatePageToggleButtonText(); // Update the page-specific button
+            initLibrary();
+        });
+    </script>
+</body>
+</html>

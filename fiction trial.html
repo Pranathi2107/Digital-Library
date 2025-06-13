@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiction Books</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        /* --- Root Variables for Theming --- */
+        :root {
+            --primary: #3498db;
+            --secondary: #23bfb2; /* This is the original header color for Fiction Books */
+            --success: #27ae60;
+            --light: #f8f9fa;
+            --dark: #121212;
+            --text: #333;
+            --text-light: #e0e0e0;
+            --card-bg: #ecf0f1;
+            --modal-bg: #ffffff;
+            --content-bg: #f4f4f4;
+            --main-nav-bg: #00a99d; /* Color from main.html header */
+            --main-nav-dark-bg: #11b8be; /* Dark mode color from main.html header */
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            background-color: var(--light);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* --- Styles for the animated shapes background (from main.html) --- */
+        .shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .shape {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(0, 169, 157, 0.2); /* Default light mode color for shapes */
+            animation: floatShape 15s linear infinite;
+        }
+
+        @keyframes floatShape {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-120vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* --- Main Header styles (from main.html, adapted) --- */
+        .main-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            font-size: 20px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: var(--main-nav-bg);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img.icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo h1 {
+            margin: 0;
+            font-size: 34px;
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background-color: white;
+            color: var(--main-nav-bg);
+        }
+
+        .toggle-btn {
+            background: white;
+            color: var(--main-nav-bg);
+            border: none;
+            border-radius: 5px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background: #007f78;
+            color: white;
+        }
+
+        /* --- Page-specific Header styles (retained and adjusted) --- */
+        .page-title-header { /* Added class to differentiate from main nav header */
+            background: var(--secondary); /* Original Fiction Books header background */
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 0; /* Ensures it's flush with the sticky nav */
+        }
+
+        .page-title-header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .book-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .book-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, background 0.3s, color 0.3s;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .book-card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text); /* Uses root variable */
+        }
+
+        .book-card p {
+            margin: 0.3rem 0;
+            font-size: 0.95rem;
+            color: var(--text); /* Uses root variable */
+        }
+
+        .btn {
+            margin-top: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: var(--modal-bg);
+            margin: 3% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 35px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #ff0000;
+        }
+
+        .reader-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--text); /* Uses root variable */
+        }
+
+        .reader-header p {
+            color: var(--text); /* Uses root variable */
+            font-style: italic;
+        }
+
+        .reader-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin: 1rem 0;
+        }
+
+        .reader-controls .btn {
+            background: var(--success);
+        }
+
+        .reader-controls .btn:hover {
+            background: #219653;
+        }
+
+        .book-content {
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: var(--content-bg);
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text); /* Uses root variable */
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .book-content h3 {
+            color: var(--secondary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .book-content p {
+            margin-bottom: 1rem;
+        }
+
+        .book-link-container {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .book-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--success);
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .book-link-btn:hover {
+            background: #219653;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* --- Page-specific controls (search and theme toggle) --- */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            width: 100%;
+        }
+
+        #searchBar {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            width: 60%;
+            max-width: 500px;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease, background 0.3s, color 0.3s;
+        }
+
+        #searchBar:focus {
+            outline: none;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        #toggleTheme { /* This is the page-specific toggle, distinct from main-nav toggle-btn */
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #toggleTheme:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .book-count {
+            text-align: center;
+            margin: 1rem 0 2rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            background: rgba(0, 0, 0, 0.03);
+            color: #666;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* --- Dark mode styles (merged and adapted) --- */
+        body.dark-mode {
+            background-color: var(--dark);
+            color: var(--text-light);
+            --card-bg: #1e1e1e;
+            --modal-bg: #252525;
+            --content-bg: #2d2d2d;
+            --text: #e0e0e0; /* Override default text color for dark mode */
+        }
+
+        .dark-mode .main-header {
+            background-color: var(--main-nav-dark-bg);
+        }
+
+        .dark-mode nav a {
+            color: var(--text-light);
+        }
+
+        .dark-mode nav a:hover {
+            background-color: var(--text-light);
+            color: var(--dark);
+        }
+
+        .dark-mode .toggle-btn {
+            background-color: var(--text-light);
+            color: var(--dark);
+        }
+
+        .dark-mode .toggle-btn:hover {
+            background-color: #007f78; /* Match main nav hover in dark mode */
+            color: white;
+        }
+
+        .dark-mode .shape {
+            color: rgba(74, 26, 232, 0.616); /* Dark mode shape color */
+        }
+
+        .dark-mode .page-title-header {
+             background: #007f78; /* Darker shade for secondary header in dark mode */
+        }
+
+        .dark-mode .book-card {
+            background: var(--card-bg);
+        }
+
+        .dark-mode .book-card h3,
+        .dark-mode .book-card p {
+            color: var(--text);
+        }
+
+        .dark-mode .modal-content {
+            background-color: var(--modal-bg);
+        }
+
+        .dark-mode .reader-header h2,
+        .dark-mode .reader-header p {
+            color: var(--text);
+        }
+
+        .dark-mode .book-content {
+            background: var(--content-bg);
+        }
+
+        .dark-mode #searchBar {
+            background-color: #333a44;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+
+        .dark-mode #toggleTheme {
+            background: #007f78; /* Darker shade for page-specific toggle in dark mode */
+            color: var(--text-light);
+        }
+        .dark-mode #toggleTheme:hover {
+            background: #005f5a; /* Even darker on hover */
+        }
+
+        .dark-mode footer {
+            background: rgba(255, 255, 255, 0.05);
+            color: #aaa;
+        }
+
+        /* --- Responsive adjustments (merged and adapted) --- */
+        @media (max-width: 768px) {
+            .main-header {
+                flex-direction: column;
+                align-items: center;
+                padding: 15px 20px;
+            }
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-top: 15px;
+                gap: 10px;
+            }
+            .logo h1 {
+                font-size: 28px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #searchBar {
+                width: 90%;
+            }
+
+            .book-list {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .modal, .modal * {
+                visibility: visible;
+            }
+            .modal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: auto;
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .modal-content {
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                padding: 20px;
+                box-shadow: none;
+                border-radius: 0;
+                max-height: none;
+                background: white;
+                color: black; /* Ensure text is black for print */
+            }
+            .close, .reader-controls, .reader-header p, .book-link-container {
+                display: none;
+            }
+            .reader-header h2 {
+                font-size: 24pt;
+                text-align: center;
+            }
+            .book-content {
+                height: auto;
+                overflow: visible;
+                padding: 0;
+                background: none;
+            }
+            .book-content p {
+                font-size: 12pt;
+                margin-bottom: 12pt;
+                color: black; /* Ensure text is black for print */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shapes" id="shapes-container"></div>
+
+    <header class="main-header">
+        <div class="logo">
+            <img src="images/Library icon-Photoroom.png" class="icon" alt="Library Icon" />
+            <h1>eBookNest</h1>
+        </div>
+
+        <nav>
+            <a href="main.html">Home</a>
+            <a href="home trial.html">dashboard</a>
+
+            <a href="about2.html">About</a>
+            <a href="contact trail.html">Contact Us</a>
+            <a href="reviews.html">Popular Books</a>
+            <a href="Loginnew.html">Login</a>
+            <button class="toggle-btn" onclick="toggleMainDarkMode()">🌙Dark</button>
+        </nav>
+    </header>
+
+    <header class="page-title-header">
+        <h1>Fiction Books</h1>
+        <div class="controls">
+            <input type="text" id="searchBar" placeholder="Search books by title or author...">
+            <button id="toggleTheme">
+                <span>🌙 Dark Mode</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="book-count" id="bookCount">7 fiction books available</div>
+        <div class="book-list" id="bookList"></div>
+    </div>
+
+    <div id="bookModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="reader-header">
+                <h2 id="modalTitle">Book Title</h2>
+                <p id="modalAuthor">Author Name</p>
+            </div>
+            <div class="reader-controls">
+                <button id="printBook" class="btn">
+                    <i class="fas fa-print"></i> Print Book
+                </button>
+            </div>
+            <div class="book-content" id="bookContent"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p><center>Fiction Book Library &copy; 2025 | Explore the Universe Through Knowledge</center></p>
+    </footer>
+
+    <script>
+        const books = [
+            {
+                id: "gatsby",
+                title: "The Great Gatsby",
+                author: "F. Scott Fitzgerald",
+                year: 1925,
+                info: "A story of wealth, love, and the American Dream in the 1920s",
+                link: "https://www.planetebook.com/free-ebooks/the-great-gatsby.pdf",
+                content: `
+                    <h3>Chapter 1</h3>
+                    <p>In my younger and more vulnerable years my father gave me some advice that I've been turning over in my mind ever since.</p>
+                    <p>"Whenever you feel like criticizing any one," he told me, "just remember that all the people in this world haven't had the advantages that you've had."</p>
+                    
+                    <h3>Chapter 2</h3>
+                    <p>About half way between West Egg and New York the motor road hastily joins the railroad and runs beside it for a quarter of a mile, so as to shrink away from a certain desolate area of land.</p>
+                    <p>This is a valley of ashes—a fantastic farm where ashes grow like wheat into ridges and hills and grotesque gardens; where ashes take the forms of houses and chimneys and rising smoke and, finally, with a transcendent effort, of men who move dimly and already crumbling through the powdery air.</p>
+                    
+                    <h3>Chapter 3</h3>
+                    <p>There was music from my neighbor's house through the summer nights. In his blue gardens men and girls came and went like moths among the whisperings and the champagne and the stars.</p>
+                    <p>At high tide in the afternoon I watched his guests diving from the tower of his raft, or taking the sun on the hot sand of his beach while his two motor-boats slit the waters of the Sound, drawing aquaplanes over cataracts of foam.</p>
+                    
+                    <h3>Chapter 4</h3>
+                    <p>On Sunday morning while church bells rang in the villages alongshore, the world and its mistress returned to Gatsby's house and twinkled hilariously on his lawn.</p>
+                    <p>"He's a bootlegger," said the young ladies, moving somewhere between his cocktails and his flowers. "One time he killed a man who had found out that he was nephew to Von Hindenburg and second cousin to the devil."</p>
+                `
+            },
+            {
+                id: "mockingbird",
+                title: "To Kill a Mockingbird",
+                author: "Harper Lee",
+                year: 1960,
+                info: "A powerful story of racial injustice and moral growth",
+                link: "https://www.raio.org/TKMFullText.pdf",
+                content: `
+                    <h3>Chapter 1</h3>
+                    <p>When he was nearly thirteen, my brother Jem got his arm badly broken at the elbow. When it healed, and Jem's fears of never being able to play football were assuaged, he was seldom self-conscious about his injury.</p>
+                    <p>His left arm was somewhat shorter than his right; when he stood or walked, the back of his hand was at right angles to his body, his thumb parallel to his thigh.</p>
+                    
+                    <h3>Chapter 2</h3>
+                    <p>Dill left us early in September, to return to Meridian. We saw him off on the five o'clock bus and I was miserable without him until it occurred to me that I would be starting to school in a week.</p>
+                    <p>I never looked forward more to anything in my life. Things were better when I had someone to think about, and I had Dill all winter.</p>
+                    
+                    <h3>Chapter 3</h3>
+                    <p>Atticus said professional people were poor because the farmers were poor. As Maycomb County was farm country, nickels and dimes were hard to come by for doctors and dentists and lawyers.</p>
+                    <p>Entailment was only a part of Mr. Cunningham's vexations. The acres not entailed were mortgaged to the hilt, and the little cash he made went to interest.</p>
+                `
+            },
+            {
+                id: "1984",
+                title: "1984",
+                author: "George Orwell",
+                year: 1949,
+                info: "A dystopian novel about totalitarianism and thought control",
+                link: "https://www.planetebook.com/free-ebooks/1984.pdf",
+                content: `
+                    <h3>Chapter 1</h3>
+                    <p>It was a bright cold day in April, and the clocks were striking thirteen. Winston Smith, his chin nuzzled into his breast in an effort to escape the vile wind, slipped quickly through the glass doors of Victory Mansions, though not quickly enough to prevent a swirl of gritty dust from entering along with him.</p>
+                    
+                    <h3>Chapter 2</h3>
+                    <p>As he put his hand to the doorknob Winston saw that he had left the diary open on the table. DOWN WITH BIG BROTHER was written all over it, in letters almost big enough to be legible across the room.</p>
+                    <p>It was an inconceivably stupid thing to have done. But he realized that he had not been afraid, or not much afraid, in writing the diary.</p>
+                    
+                    <h3>Chapter 3</h3>
+                    <p>Winston was dreaming of his mother. He must, he thought, have been ten or eleven years old when his mother had disappeared. She was a tall, statuesque, rather silent woman with slow movements and magnificent fair hair.</p>
+                    <p>His father he remembered more vaguely as dark and thin, dressed always in neat dark clothes (Winston remembered especially the very thin soles of his father's shoes) and wearing spectacles.</p>
+                `
+            },
+            {
+                id: "pride",
+                title: "Pride and Prejudice",
+                author: "Jane Austen",
+                year: 1813,
+                info: "A romantic novel of manners set in rural England",
+                link: "https://www.gutenberg.org/files/1342/1342-h/1342-h.htm",
+                content: `
+                    <h3>Chapter 1</h3>
+                    <p>It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.</p>
+                    <p>However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered the rightful property of some one or other of their daughters.</p>
+                    
+                    <h3>Chapter 2</h3>
+                    <p>Mr. Bennet was among the earliest of those who waited on Mr. Bingley. He had always intended to visit him, though to the last always assuring his wife that he should not go; and till the evening after the visit was paid she had no knowledge of it.</p>
+                    
+                    <h3>Chapter 3</h3>
+                    <p>Not all that Mrs. Bennet, however, with the assistance of her five daughters, could ask on the subject was sufficient to draw from her husband any satisfactory description of Mr. Bingley.</p>
+                    <p>They attacked him in various ways—with barefaced questions, ingenious suppositions, and distant surmises; but he eluded the skill of them all, and they were at last obliged to accept the second-hand intelligence of their neighbour, Lady Lucas.</p>
+                `
+            },
+            {
+                id: "frankenstein",
+                title: "Frankenstein",
+                author: "Mary Shelley",
+                year: 1818,
+                info: "A Gothic tale of scientific ambition and its consequences",
+                link: "https://www.gutenberg.org/ebooks/84",
+                content: `
+                    <h3>Chapter 1</h3>
+                    <p>I am by birth a Genevese, and my family is one of the most distinguished of that republic. My ancestors had been for many years counsellors and syndics, and my father had filled several public situations with honour and reputation.</p>
+                    <p>He was respected by all who knew him for his integrity and indefatigable attention to public business.</p>
+                    
+                    <h3>Chapter 2</h3>
+                    <p>We were brought up together; there was not quite a year difference in our ages. I need not say that we were strangers to any species of disunion or dispute.</p>
+                    <p>Harmony was the soul of our companionship, and the diversity and contrast that subsisted in our characters drew us nearer together.</p>
+                    
+                    <h3>Chapter 3</h3>
+                    <p>When I had attained the age of seventeen my parents resolved that I should become a student at the university of Ingolstadt.</p>
+                    <p>I had hitherto attended the schools of Geneva, but my father thought it necessary for the completion of my education that I should be made acquainted with other customs than those of my native country.</p>
+                `
+            },
+            {
+                id: "dracula",
+                title: "Dracula",
+                author: "Bram Stoker",
+                year: 1897,
+                info: "The classic vampire tale that defined a genre",
+                link: "https://www.gutenberg.org/ebooks/345",
+                content: `
+                    <h3>Chapter 1</h3>
+                    <p>Left Munich at 8:35 P.M. on 1st May, arriving at Vienna early next morning; should have arrived at 6:46, but train was an hour late.</p>
+                    <p>Buda-Pesth seems a wonderful place, from the glimpse which I got of it from the train and the little I could walk through the streets.</p>
+                    
+                    <h3>Chapter 2</h3>
+                    <p>All day long we seemed to dawdle through a country which was full of beauty of every kind. Sometimes we saw little towns or castles on the top of steep hills such as we see in old missals.</p>
+                    <p>Sometimes we ran by rivers and streams which seemed from the wide stony margin on each side of them to be subject to great floods.</p>
+                    
+                    <h3>Chapter 3</h3>
+                    <p>When I found that I was a prisoner a sort of wild feeling came over me. I rushed up and down the stairs, trying every door and peering out of every window I could find; but after a little the conviction of my helplessness overpowered all other feelings.</p>
+                    <p>When I look back after a few hours I think I must have been mad for the time, for I behaved much as a rat does in a trap.</p>
+                `
+            },
+            {
+                id: "mobydick",
+                title: "Moby-Dick",
+                author: "Herman Melville",
+                year: 1851,
+                info: "An epic tale of obsession and the whaling industry",
+                link: "https://www.gutenberg.org/ebooks/2701",
+                content: `
+                    <h3>Chapter 1</h3>
+                    <p>Call me Ishmael. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world.</p>
+                    <p>It is a way I have of driving off the spleen and regulating the circulation.</p>
+                    
+                    <h3>Chapter 2</h3>
+                    <p>With my carpet-bag in hand, I was leisurely walking down Washington Street, full of dry thoughts about my purse, when at the corner of a dimly lit alley, I came across a sign that caught my attention.</p>
+                    <p>It read: "The Spouter-Inn: Peter Coffin." Coffin? Spouter? Rather ominous in this particular blackness of night, I thought.</p>
+                    
+                    <h3>Chapter 3</h3>
+                    <p>Entering that gable-ended Spouter-Inn, you found yourself in a wide, low, straggling entry with old-fashioned wainscots, reminding one of the bulwarks of some condemned old craft.</p>
+                    <p>On one side hung a very large oil painting so thoroughly besmoked, and every way defaced, that in the unequal cross-lights by which you viewed it, it was only by diligent study that you could any way arrive at an understanding of its purpose.</p>
+                `
+            }
+        ];
+
+        // DOM Elements
+        const searchBar = document.getElementById('searchBar');
+        const toggleTheme = document.getElementById('toggleTheme'); // Page-specific theme toggle
+        const bookList = document.getElementById('bookList');
+        const bookModal = document.getElementById('bookModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalAuthor = document.getElementById('modalAuthor');
+        const bookContent = document.getElementById('bookContent');
+        const closeModal = document.querySelector('.close');
+        const printBook = document.getElementById('printBook');
+        const bookCount = document.getElementById('bookCount'); // Ensure this element exists in your HTML
+
+        // Animated background shapes (from main.html)
+        const shapesContainer = document.getElementById("shapes-container");
+        const icon = "📖"; // You can change this icon for Fiction Books
+
+        if (shapesContainer) {
+            for (let i = 0; i < 30; i++) {
+                const shape = document.createElement("div");
+                shape.classList.add("shape");
+                shape.innerText = icon;
+                shape.style.left = Math.random() * 100 + "%";
+                shape.style.top = Math.random() * 100 + 50 + "%";
+                shape.style.fontSize = Math.random() * 20 + 20 + "px";
+                shape.style.animationDuration = (Math.random() * 10 + 10) + "s";
+                shapesContainer.appendChild(shape);
+            }
+        }
+
+        // Toggle dark mode function for main navigation (from main.html)
+        function toggleMainDarkMode() {
+            document.body.classList.toggle("dark-mode");
+            // Update toggle button text for the main nav button
+            const mainNavToggleButton = document.querySelector('.main-header .toggle-btn');
+            if (mainNavToggleButton) {
+                mainNavToggleButton.textContent = document.body.classList.contains('dark-mode') ? '💡Light' : '🌙Dark';
+            }
+            // Also update the page-specific toggle button text
+            updatePageToggleButtonText();
+        }
+
+        // Function to update the text of the page-specific theme toggle button
+        function updatePageToggleButtonText() {
+            if (toggleTheme) {
+                toggleTheme.querySelector('span').textContent =
+                    document.body.classList.contains('dark-mode') ?
+                    '☀️ Light Mode' : '🌙 Dark Mode';
+            }
+        }
+
+        // Initialize Library
+        function initLibrary() {
+            bookList.innerHTML = ''; // Clear existing content
+            
+            books.forEach(book => {
+                const bookCard = document.createElement('div');
+                bookCard.className = 'book-card';
+                bookCard.innerHTML = `
+                    <div class="book-info">
+                        <h3>${book.title}</h3>
+                        <p><strong>Author:</strong> ${book.author}</p>
+                        <p><strong>Published:</strong> ${book.year}</p>
+                        <p class="book-meta">${book.info}</p>
+                        <div class="book-actions">
+                            <button class="btn read-btn" data-id="${book.id}">
+                                <i class="fas fa-book-open"></i> Read Book
+                            </button>
+                        </div>
+                    </div>
+                `;
+                bookList.appendChild(bookCard);
+            });
+
+            // Set initial book count (added for consistency, assumes bookCount element exists)
+            if (bookCount) {
+                bookCount.textContent = `${books.length} fiction book${books.length !== 1 ? 's' : ''} available`;
+            }
+
+            // Add event listeners to read buttons
+            addReadButtonListeners();
+        }
+
+        // Add event listeners to read buttons
+        function addReadButtonListeners() {
+            document.querySelectorAll('.read-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const bookId = this.dataset.id;
+                    const book = books.find(b => b.id === bookId);
+                    if (book) {
+                        openBookModal(book);
+                    }
+                });
+            });
+        }
+
+        // Open book modal with content
+        function openBookModal(book) {
+            modalTitle.textContent = book.title;
+            modalAuthor.textContent = `by ${book.author}`;
+            bookContent.innerHTML = `
+                ${book.content}
+                <div class="book-link-container">
+                    <a href="${book.link}" target="_blank" class="book-link-btn">
+                        <i class="fas fa-external-link-alt"></i>
+                        Read the original book
+                    </a>
+                </div>
+            `;
+            bookModal.style.display = 'block';
+        }
+
+        // Close Modal
+        closeModal.addEventListener('click', () => {
+            bookModal.style.display = 'none';
+        });
+
+        // Close Modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === bookModal) {
+                bookModal.style.display = 'none';
+            }
+        });
+
+        // Print Book
+        printBook.addEventListener('click', () => {
+            window.print();
+        });
+
+        // Page-specific Theme Toggle
+        toggleTheme.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            // Update the text for both the page-specific button and the main nav button
+            updatePageToggleButtonText();
+            const mainNavToggleButton = document.querySelector('.main-header .toggle-btn');
+            if (mainNavToggleButton) {
+                mainNavToggleButton.textContent = document.body.classList.contains('dark-mode') ? '💡Light' : '🌙Dark';
+            }
+        });
+
+        // Search Functionality
+        searchBar.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const bookCards = document.querySelectorAll('.book-card');
+            let visibleCount = 0;
+            
+            bookCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const author = card.querySelector('p').textContent.toLowerCase();
+                const isVisible = title.includes(query) || author.includes(query);
+                
+                card.style.display = isVisible ? 'block' : 'none';
+                if (isVisible) visibleCount++;
+            });
+            
+            if (bookCount) { // Ensure bookCount element exists before updating
+                bookCount.textContent = `${visibleCount} book${visibleCount !== 1 ? 's' : ''} found`;
+            }
+        });
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set initial text for both toggle buttons based on body class
+            const mainNavToggleButton = document.querySelector('.main-header .toggle-btn');
+            if (mainNavToggleButton) {
+                mainNavToggleButton.textContent = document.body.classList.contains('dark-mode') ? '💡Light' : '🌙Dark';
+            }
+            updatePageToggleButtonText(); // Update the page-specific button
+            initLibrary();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History Books</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        /* --- Root Variables for Theming --- */
+        :root {
+            --primary: #3498db;
+            --secondary: #23bfb2; /* This is the original header color for Fiction Books */
+            --success: #27ae60;
+            --light: #f8f9fa;
+            --dark: #121212;
+            --text: #333;
+            --text-light: #e0e0e0;
+            --card-bg: #ecf0f1;
+            --modal-bg: #ffffff;
+            --content-bg: #f4f4f4;
+            --main-nav-bg: #00a99d; /* Color from main.html header */
+            --main-nav-dark-bg: #11b8be; /* Dark mode color from main.html header */
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            background-color: var(--light);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* --- Styles for the animated shapes background (from main.html) --- */
+        .shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .shape {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(0, 169, 157, 0.2); /* Default light mode color for shapes */
+            animation: floatShape 15s linear infinite;
+        }
+
+        @keyframes floatShape {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-120vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* --- Main Header styles (from main.html, adapted) --- */
+        .main-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            font-size: 20px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: var(--main-nav-bg);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img.icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo h1 {
+            margin: 0;
+            font-size: 34px;
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background-color: white;
+            color: var(--main-nav-bg);
+        }
+
+        .toggle-btn {
+            background: white;
+            color: var(--main-nav-bg);
+            border: none;
+            border-radius: 5px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background: #007f78;
+            color: white;
+        }
+
+        /* --- Page-specific Header styles (retained and adjusted) --- */
+        .page-title-header { /* Added class to differentiate from main nav header */
+            background: var(--secondary); /* Original Fiction Books header background */
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 0; /* Ensures it's flush with the sticky nav */
+        }
+
+        .page-title-header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .book-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .book-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, background 0.3s, color 0.3s;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .book-card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text); /* Uses root variable */
+        }
+
+        .book-card p {
+            margin: 0.3rem 0;
+            font-size: 0.95rem;
+            color: var(--text); /* Uses root variable */
+        }
+
+        .btn {
+            margin-top: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: var(--modal-bg);
+            margin: 3% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 35px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #ff0000;
+        }
+
+        .reader-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--text); /* Uses root variable */
+        }
+
+        .reader-header p {
+            color: var(--text); /* Uses root variable */
+            font-style: italic;
+        }
+
+        .reader-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin: 1rem 0;
+        }
+
+        .reader-controls .btn {
+            background: var(--success);
+        }
+
+        .reader-controls .btn:hover {
+            background: #219653;
+        }
+
+        .book-content {
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: var(--content-bg);
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text); /* Uses root variable */
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .book-content h3 {
+            color: var(--secondary); /* Retained secondary color */
+            border-bottom: 2px solid var(--secondary); /* Retained secondary color */
+            padding-bottom: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .book-content p {
+            margin-bottom: 1rem;
+        }
+
+        .book-link-container {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .book-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--success);
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .book-link-btn:hover {
+            background: #219653;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* --- Page-specific controls (search and theme toggle) --- */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            width: 100%;
+        }
+
+        #searchBar {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            width: 60%;
+            max-width: 500px;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease, background 0.3s, color 0.3s;
+        }
+
+        #searchBar:focus {
+            outline: none;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        #toggleTheme { /* This is the page-specific toggle, distinct from main-nav toggle-btn */
+            background: var(--secondary); /* Retained secondary color */
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #toggleTheme:hover {
+            background: #2980b9; /* Retained hover color */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .book-count {
+            text-align: center;
+            margin: 1rem 0 2rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            background: rgba(0, 0, 0, 0.03);
+            color: #666;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* --- Dark mode styles (merged and adapted) --- */
+        body.dark-mode {
+            background-color: var(--dark);
+            color: var(--text-light);
+            --card-bg: #1e1e1e;
+            --modal-bg: #252525;
+            --content-bg: #2d2d2d;
+            --text: #e0e0e0; /* Override default text color for dark mode */
+        }
+
+        .dark-mode .main-header {
+            background-color: var(--main-nav-dark-bg);
+        }
+
+        .dark-mode nav a {
+            color: var(--text-light);
+        }
+
+        .dark-mode nav a:hover {
+            background-color: var(--text-light);
+            color: var(--dark);
+        }
+
+        .dark-mode .toggle-btn {
+            background-color: var(--text-light);
+            color: var(--dark);
+        }
+
+        .dark-mode .toggle-btn:hover {
+            background-color: #007f78; /* Match main nav hover in dark mode */
+            color: white;
+        }
+
+        .dark-mode .shape {
+            color: rgba(74, 26, 232, 0.616); /* Dark mode shape color */
+        }
+
+        .dark-mode .page-title-header {
+            background: #007f78; /* Darker shade for secondary header in dark mode */
+        }
+
+        .dark-mode .book-card {
+            background: var(--card-bg);
+        }
+
+        .dark-mode .book-card h3,
+        .dark-mode .book-card p {
+            color: var(--text);
+        }
+
+        .dark-mode .modal-content {
+            background-color: var(--modal-bg);
+        }
+
+        .dark-mode .reader-header h2,
+        .dark-mode .reader-header p {
+            color: var(--text);
+        }
+
+        .dark-mode .book-content {
+            background: var(--content-bg);
+        }
+
+        .dark-mode #searchBar {
+            background-color: #333a44;
+            border-color: #555;
+            color: #e0e0e0;
+        }
+
+        .dark-mode #toggleTheme {
+            background: #007f78; /* Darker shade for page-specific toggle in dark mode */
+            color: var(--text-light);
+        }
+        .dark-mode #toggleTheme:hover {
+            background: #005f5a; /* Even darker on hover */
+        }
+
+        .dark-mode footer {
+            background: rgba(255, 255, 255, 0.05);
+            color: #aaa;
+        }
+
+        /* --- Responsive adjustments (merged and adapted) --- */
+        @media (max-width: 768px) {
+            .main-header {
+                flex-direction: column;
+                align-items: center;
+                padding: 15px 20px;
+            }
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-top: 15px;
+                gap: 10px;
+            }
+            .logo h1 {
+                font-size: 28px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #searchBar {
+                width: 90%;
+            }
+
+            .book-list {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .modal, .modal * {
+                visibility: visible;
+            }
+            .modal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: auto;
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .modal-content {
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                padding: 20px;
+                box-shadow: none;
+                border-radius: 0;
+                max-height: none;
+                background: white;
+                color: black; /* Ensure text is black for print */
+            }
+            .close, .reader-controls, .reader-header p, .book-link-container {
+                display: none;
+            }
+            .reader-header h2 {
+                font-size: 24pt;
+                text-align: center;
+            }
+            .book-content {
+                height: auto;
+                overflow: visible;
+                padding: 0;
+                background: none;
+            }
+            .book-content p {
+                font-size: 12pt;
+                margin-bottom: 12pt;
+                color: black; /* Ensure text is black for print */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shapes" id="shapes-container"></div>
+
+    <header class="main-header">
+        <div class="logo">
+            <img src="images/Library icon-Photoroom.png" class="icon" alt="Library Icon" />
+            <h1>eBookNest</h1>
+        </div>
+
+        <nav>
+            <a href="main.html">Home</a>
+<a href="home trial.html">dashboard</a>
+            <a href="about2.html">About</a>
+            <a href="contact trail.html">Contact Us</a>
+            <a href="reviews.html">Popular Books</a>
+            <a href="Loginnew.html">Login</a>
+            <button class="toggle-btn" onclick="toggleMainDarkMode()">🌙Dark</button>
+        </nav>
+    </header>
+
+    <header class="page-title-header">
+        <h1>History Books</h1>
+        <div class="controls">
+            <input type="text" id="searchBar" placeholder="Search books by title or author...">
+            <button id="toggleTheme">
+                <span>🌙 Dark Mode</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="book-count" id="historyBookCount"></div>
+        <div class="book-list" id="historyBookList"></div>
+    </div>
+
+    <div id="bookModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="reader-header">
+                <h2 id="modalTitle">Book Title</h2>
+                <p id="modalAuthor">Author Name</p>
+            </div>
+            <div class="reader-controls">
+                <button id="printBook" class="btn">
+                    <i class="fas fa-print"></i> Print Book
+                </button>
+            </div>
+            <div class="book-content" id="bookContent"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p><center>History Book Library &copy; 2025 | Explore the Universe Through Knowledge</center></p>
+    </footer>
+
+    <script>
+        const historyBooks = [
+            {
+                id: "sapiens",
+                title: "Sapiens: A Brief History of Humankind",
+                author: "Yuval Noah Harari",
+                year: 2014,
+                info: "Explores the entire history of humanity, from the first humans to the radical — and sometimes devastating — breakthroughs of the Cognitive, Agricultural, and Scientific Revolutions.",
+                link: "https://example.com/sapiens.pdf", // Placeholder link (link field remains in data, but not used for display)
+                content: `
+                    <h3>Part I: The Cognitive Revolution</h3>
+                    <p>About 70,000 years ago, Homo sapiens began to do very special things. The appearance of new ways of thinking and communicating enabled sapiens to create art, cooperate in larger numbers, and develop complex societies.</p>
+                    <p>This period, from about 70,000 to 30,000 years ago, is known as the Cognitive Revolution. It was triggered by how sapiens’ brains began to operate in a new, unprecedented way.</p>
+                    
+                    <h3>Part II: The Agricultural Revolution</h3>
+                    <p>The Agricultural Revolution, which began around 12,000 years ago, was a turning point in the history of humankind. Instead of foraging for food, humans started cultivating crops and domesticating animals.</p>
+                    <p>While often seen as a step forward, Harari argues that it might have been a trap, leading to harder work, worse diets, and increased disease.</p>
+                `
+            },
+            {
+                id: "guns-germs-steel",
+                title: "Guns, Germs, and Steel",
+                author: "Jared Diamond",
+                year: 1997,
+                info: "Examines why Eurasians conquered, displaced, or decimated Native Americans, Australians, and Africans, instead of the other way around.",
+                link: "https://example.com/guns-germs-steel.pdf", // Placeholder link
+                content: `
+                    <h3>Prologue: Yali's Question</h3>
+                    <p>The book opens with Yali's question to the author: "Why is it that you white people developed so much cargo and brought it to New Guinea, but we black people had so little of our own?"</p>
+                    <p>This question sets the stage for Diamond's exploration of why different societies have developed at different rates.</p>
+                    
+                    <h3>Chapter 1: Up to the Starting Line</h3>
+                    <p>Diamond begins by reviewing human evolution and the spread of humans across the globe, setting the baseline for the differences that would emerge later.</p>
+                    <p>He emphasizes that differences in human potential were not inherent but arose from environmental factors.</p>
+                `
+            },
+            {
+                id: "a-peoples-history",
+                title: "A People's History of the United States",
+                author: "Howard Zinn",
+                year: 1980,
+                info: "Recounts American history from the perspective of marginalized groups rather than the traditional narrative of leaders and dominant powers.",
+                link: "https://example.com/a-peoples-history.pdf", // Placeholder link
+                content: `
+                    <h3>Chapter 1: Columbus, the Indians, and Human Progress</h3>
+                    <p>Zinn starts by examining the arrival of Columbus in the Americas, focusing on the brutal treatment of the Arawak Indians.</p>
+                    <p>He challenges the heroic narrative of Columbus, portraying him as a figure who initiated centuries of conquest and exploitation.</p>
+                    
+                    <h3>Chapter 2: Drawing the Color Line</h3>
+                    <p>This chapter delves into the origins of slavery in North America, tracing the development of racial discrimination and the economic incentives behind it.</p>
+                    <p>Zinn highlights the early attempts of black and white laborers to unite and how these efforts were suppressed by the ruling class.</p>
+                `
+            },
+            {
+                id: "silk-roads",
+                title: "The Silk Roads: A New History of the World",
+                author: "Peter Frankopan",
+                year: 2015,
+                info: "Re-examines history from the perspective of the East, highlighting the centrality of the Silk Roads to global development.",
+                link: "https://example.com/silk-roads.pdf", // Placeholder link
+                content: `
+                    <h3>Chapter 1: The First Silk Roads</h3>
+                    <p>Frankopan begins by establishing the early importance of the region between East and West, emphasizing trade and the movement of ideas, goods, and people.</p>
+                    <p>He argues that this area, often seen as a periphery in Western narratives, was in fact the nexus of global development.</p>
+                    
+                    <h3>Chapter 2: The Cradle of Civilization</h3>
+                    <p>This chapter explores the ancient civilizations that flourished along the Silk Roads, from Mesopotamia to Persia, and their contributions to human progress.</p>
+                    <p>It highlights the interconnectedness of these cultures long before the advent of modern globalization.</p>
+                `
+            },
+            {
+                id: "rome",
+                title: "SPQR: A History of Ancient Rome",
+                author: "Mary Beard",
+                year: 2015,
+                info: "A fresh and engaging account of ancient Rome's history, focusing on what made it successful and how we understand it today.",
+                link: "https://example.com/spqr.pdf", // Placeholder link
+                content: `
+                    <h3>Introduction: The Start of It All</h3>
+                    <p>Beard begins by questioning how we define "ancient Rome" and the challenges of writing its history, given the vast span of time and the nature of surviving evidence.</p>
+                    <p>She sets out her approach to presenting a nuanced and accessible narrative.</p>
+                    
+                    <h3>Chapter 1: How Do We Know?</h3>
+                    <p>This chapter discusses the sources available to historians of ancient Rome, from archaeological finds to literary texts, and the critical methods used to interpret them.</p>
+                    <p>Beard emphasizes the importance of understanding the biases and contexts of these sources.</p>
+                `
+            },
+            {
+                id: "world-history",
+                title: "A Little History of the World",
+                author: "E. H. Gombrich",
+                year: 1935,
+                info: "A concise and accessible overview of world history for young readers and adults alike, covering major events from the Stone Age to the modern era.",
+                link: "https://example.com/little-history-world.pdf", // Placeholder link
+                content: `
+                    <h3>Chapter 1: Once Upon a Time</h3>
+                    <p>Gombrich begins by transporting the reader to the earliest human history, focusing on the simple lives of Stone Age people and their first discoveries, like fire and tools.</p>
+                    <p>He makes complex historical concepts understandable through a storytelling approach.</p>
+                    
+                    <h3>Chapter 2: The Greatest Inventors of All Time</h3>
+                    <p>This chapter highlights the invention of writing and agriculture, presenting them as monumental achievements that fundamentally reshaped human civilization.</p>
+                    <p>It explains how these innovations led to the development of early cities and states.</p>
+                `
+            },
+            {
+                id: "middle-ages",
+                title: "The Portable Medieval Reader",
+                author: "James Bruce Ross & Mary Martin McLaughlin (Editors)",
+                year: 1949,
+                info: "A collection of primary source texts from the Middle Ages, offering direct insight into the lives, thoughts, and culture of the period.",
+                link: "https://example.com/portable-medieval.pdf", // Placeholder link
+                content: `
+                    <h3>Part I: The Early Middle Ages</h3>
+                    <p>This section includes excerpts from foundational texts and historical accounts that shed light on the collapse of the Roman Empire, the rise of new kingdoms, and the spread of Christianity.</p>
+                    <p>It provides a glimpse into the intellectual and social challenges of the time.</p>
+                    
+                    <h3>Part II: Life in the Feudal System</h3>
+                    <p>Readings here describe the structure of feudal society, the roles of lords, vassals, and serfs, and the daily life within medieval manors and castles.</p>
+                    <p>It also covers the influence of the Church on everyday existence.</p>
+                `
+            }
+        ];
+
+        // DOM Elements
+        const searchBar = document.getElementById('searchBar');
+        const toggleTheme = document.getElementById('toggleTheme'); // Page-specific theme toggle
+        const bookList = document.getElementById('historyBookList'); // Changed ID
+        const bookModal = document.getElementById('bookModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalAuthor = document.getElementById('modalAuthor');
+        const bookContent = document.getElementById('bookContent');
+        const closeModal = document.querySelector('.close');
+        const printBook = document.getElementById('printBook');
+        const bookCount = document.getElementById('historyBookCount'); // Changed ID
+
+        // Animated background shapes (from main.html)
+        const shapesContainer = document.getElementById("shapes-container");
+        const icon = "🏛️"; // Changed icon for History Books (you can choose another, e.g., "📜", "⏳")
+
+        if (shapesContainer) {
+            for (let i = 0; i < 30; i++) {
+                const shape = document.createElement("div");
+                shape.classList.add("shape");
+                shape.innerText = icon;
+                shape.style.left = Math.random() * 100 + "%";
+                shape.style.top = Math.random() * 100 + 50 + "%";
+                shape.style.fontSize = Math.random() * 20 + 20 + "px";
+                shape.style.animationDuration = (Math.random() * 10 + 10) + "s";
+                shapesContainer.appendChild(shape);
+            }
+        }
+
+        // Toggle dark mode function for main navigation (from main.html)
+        function toggleMainDarkMode() {
+            document.body.classList.toggle("dark-mode");
+            // Update toggle button text for the main nav button
+            const mainNavToggleButton = document.querySelector('.main-header .toggle-btn');
+            if (mainNavToggleButton) {
+                mainNavToggleButton.textContent = document.body.classList.contains('dark-mode') ? '💡Light' : '🌙Dark';
+            }
+            // Also update the page-specific toggle button text
+            updatePageToggleButtonText();
+        }
+
+        // Function to update the text of the page-specific theme toggle button
+        function updatePageToggleButtonText() {
+            if (toggleTheme) {
+                toggleTheme.querySelector('span').textContent =
+                    document.body.classList.contains('dark-mode') ?
+                    '☀️ Light Mode' : '🌙 Dark Mode';
+            }
+        }
+
+        // Initialize Library
+        function initLibrary() {
+            displayBooks(historyBooks); // Use historyBooks data
+            updatePageToggleButtonText(); // Set initial text for page-specific toggle
+            // Set initial text for main nav toggle
+            const mainNavToggleButton = document.querySelector('.main-header .toggle-btn');
+            if (mainNavToggleButton) {
+                mainNavToggleButton.textContent = document.body.classList.contains('dark-mode') ? '💡Light' : '🌙Dark';
+            }
+        }
+
+        // Function to display books
+        function displayBooks(filteredBooks) {
+            bookList.innerHTML = ''; // Clear existing content
+            bookCount.textContent = `${filteredBooks.length} history books available`;
+
+            if (filteredBooks.length === 0) {
+                bookList.innerHTML = '<p style="text-align: center; grid-column: 1 / -1;">No history books found matching your search.</p>';
+                return;
+            }
+
+            filteredBooks.forEach(book => {
+                const bookCard = document.createElement('div');
+                bookCard.classList.add('book-card');
+                bookCard.innerHTML = `
+                    <h3>${book.title}</h3>
+                    <p><strong>Author:</strong> ${book.author}</p>
+                    <p><strong>Year:</strong> ${book.year}</p>
+                    <p>${book.info}</p>
+                    <button class="btn read-now-btn" data-book-id="${book.id}">
+                        <i class="fas fa-book-reader"></i> Read Now
+                    </button>
+                    `;
+                bookList.appendChild(bookCard);
+            });
+
+            // Add event listeners to "Read Now" buttons
+            document.querySelectorAll('.read-now-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const bookId = event.target.dataset.bookId;
+                    const selectedBook = historyBooks.find(b => b.id === bookId);
+                    if (selectedBook) {
+                        modalTitle.textContent = selectedBook.title;
+                        modalAuthor.textContent = `By ${selectedBook.author}`;
+                        bookContent.innerHTML = selectedBook.content;
+                        bookModal.style.display = 'block';
+                    }
+                });
+            });
+        }
+
+        // Search functionality
+        searchBar.addEventListener('keyup', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredBooks = historyBooks.filter(book =>
+                book.title.toLowerCase().includes(searchTerm) ||
+                book.author.toLowerCase().includes(searchTerm)
+            );
+            displayBooks(filteredBooks);
+        });
+
+        // Modal close functionality
+        closeModal.addEventListener('click', () => {
+            bookModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target == bookModal) {
+                bookModal.style.display = 'none';
+            }
+        });
+
+        // Page-specific theme toggle functionality
+        toggleTheme.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            updatePageToggleButtonText(); // Update the text based on current theme
+            // Ensure main nav toggle also updates if it exists and is on the same page
+            const mainNavToggleButton = document.querySelector('.main-header .toggle-btn');
+            if (mainNavToggleButton) {
+                mainNavToggleButton.textContent = document.body.classList.contains('dark-mode') ? '💡Light' : '🌙Dark';
+            }
+        });
+
+        // Print functionality
+        printBook.addEventListener('click', () => {
+            window.print();
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initLibrary);
+    </script>
+</body>
+</html>

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Philosophy Books</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body {
+      font-family: lora;
+      background-color: #f8f9fa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #23bfb2d6;
+      color: white;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .book-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .book-card {
+      background: #ecf0f1;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+
+    .book-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .book-card h3 {
+      margin-bottom: 0.5rem;
+      color: #2c3e50;
+    }
+
+    .book-card p {
+      margin: 0.3rem 0;
+      font-size: 0.95rem;
+    }
+
+    .btn {
+      margin-top: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: #2980b9;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      overflow: auto;
+    }
+
+    .modal-content {
+      background-color: #ffffff;
+      margin: 3% auto;
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 900px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 35px;
+      font-weight: bold;
+      color: #aaa;
+      cursor: pointer;
+    }
+
+    .reader-header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .reader-header p {
+      color: #666;
+    }
+
+    .reader-controls {
+      display: flex;
+      justify-content: flex-end;
+      margin: 1rem 0;
+    }
+
+    .reader-controls .btn {
+      background: #2ecc71;
+    }
+
+    .book-content {
+      overflow-y: auto;
+      padding: 1rem;
+      background: #f4f4f4;
+      border-radius: 8px;
+      margin-top: 1rem;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .book-link-container {
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .book-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.5rem;
+      background: #27ae60;
+      color: white;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .book-link-btn:hover {
+      background: #219653;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .modal, .modal * {
+        visibility: visible;
+      }
+      .modal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: auto;
+        background: white;
+        padding: 0;
+        margin: 0;
+      }
+      .modal-content {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 20px;
+        box-shadow: none;
+        border-radius: 0;
+        max-height: none;
+      }
+      .close, .reader-controls, .reader-header p, .book-link-container {
+        display: none;
+      }
+      .reader-header h2 {
+        font-size: 24pt;
+        text-align: center;
+      }
+      .book-content {
+        height: auto;
+        overflow: visible;
+        padding: 0;
+        background: none;
+      }
+      .book-content p {
+        font-size: 12pt;
+        margin-bottom: 12pt;
+      }
+    }
+     .controls {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      #searchBar {
+        width: 90%;
+      }
+       #toggleTheme:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+     body.dark-mode {
+      background-color: #121212;
+      color: var(--text-light);
+      --light: #1e1e1e;
+      --dark: #f0f0f0;
+      --text: #e0e0e0;
+    }
+.controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1rem 0;
+      width: 100%;
+    }
+
+    #searchBar {
+      padding: 0.8rem 1.2rem;
+      border: none;
+      border-radius: 50px;
+      width: 60%;
+      max-width: 500px;
+      font-size: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    #searchBar:focus {
+      outline: none;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+      transform: translateY(-2px);
+    }
+
+    #toggleTheme {
+      background: var(--secondary);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #toggleTheme:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Philosophy Books</h1>
+    <div class="controls">
+      <input type="text" id="searchBar" placeholder="Search books by title or author...">
+      <button id="toggleTheme">
+        <span>🌙 Dark Mode</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="book-list" id="bookList"></div>
+  </div>
+
+  <!-- Book Reader Modal -->
+  <div id="bookModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div class="reader-header">
+        <h2 id="modalTitle">Book Title</h2>
+        <p id="modalAuthor">Author Name</p>
+      </div>
+      <div class="reader-controls">
+        <button id="printBook" class="btn">
+          <i class="fas fa-print"></i> Print Book
+        </button>
+      </div>
+      <div class="book-content" id="bookContent"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p><center>Philosophy Library &copy; 2025 | Contemplate Life's Greatest Questions</center></p>
+  </footer>
+
+  <script>
+    const books = [
+      {
+        id: "republic",
+        title: "The Republic",
+        author: "Plato",
+        year: "375 BC",
+        info: "Foundational work of Western philosophy",
+        link: "https://en.wikipedia.org/wiki/Republic_(Plato)",
+        content: `
+          <h3>Book I: On Justice</h3>
+          <p>Socrates: I went down yesterday to the Piraeus with Glaucon, the son of Ariston, that I might offer up my prayers to the goddess; and also because I wanted to see in what manner they would celebrate the festival, which was a new thing.</p>
+          
+          <h3>Book V: The Philosopher King</h3>
+          <p>Until philosophers are kings, or the kings and princes of this world have the spirit and power of philosophy, and political greatness and wisdom meet in one, cities will never have rest from their evils.</p>
+          
+          <h3>Book VII: The Allegory of the Cave</h3>
+          <p>Imagine human beings living in an underground cave which has a mouth open towards the light. They have been there from childhood, and have their legs and necks chained so that they cannot move, and can only see before them.</p>
+        `
+      },
+      {
+        id: "meditations",
+        title: "Meditations",
+        author: "Marcus Aurelius",
+        year: "161-180 AD",
+        info: "Personal reflections of a Roman emperor",
+        link: "https://en.wikipedia.org/wiki/Meditations",
+        content: `
+          <h3>Book II: On the River of Time</h3>
+          <p>Begin the morning by saying to yourself: I shall meet with the busybody, the ungrateful, arrogant, deceitful, envious, unsocial. All these things happen to them by reason of their ignorance of what is good and evil.</p>
+          
+          <h3>Book IV: On the Nature of the Universe</h3>
+          <p>Everything is interwoven, and the web is holy; none of its parts are unconnected. They are composed harmoniously, and together they compose the world. One world, made up of all things. One divinity, present in them all.</p>
+          
+          <h3>Book VIII: On Living According to Nature</h3>
+          <p>Do not act as if you were going to live ten thousand years. Death hangs over you. While you live, while it is in your power, be good.</p>
+        `
+      },
+      {
+        id: "beyond-good-evil",
+        title: "Beyond Good and Evil",
+        author: "Friedrich Nietzsche",
+        year: 1886,
+        info: "Critique of traditional morality",
+        link: "https://en.wikipedia.org/wiki/Beyond_Good_and_Evil",
+        content: `
+          <h3>Preface: On the Prejudice of Philosophers</h3>
+          <p>Supposing truth to be a woman—what? Is the suspicion not well founded that all philosophers, when they have been dogmatists, have had little understanding of women?</p>
+          
+          <h3>Part 3: The Religious Nature</h3>
+          <p>The Christian faith from the beginning is sacrifice: the sacrifice of all freedom, all pride, all self-confidence of the spirit; at the same time, enslavement and self-mockery, self-mutilation.</p>
+          
+          <h3>Part 9: What Is Noble?</h3>
+          <p>Every enhancement of the type "man" has so far been the work of an aristocratic society—and it will be so again and again—a society that believes in the long ladder of an order of rank and differences in value between man and man.</p>
+        `
+      },
+      {
+        id: "being-and-time",
+        title: "Being and Time",
+        author: "Martin Heidegger",
+        year: 1927,
+        info: "Foundational text of existential phenomenology",
+        link: "https://en.wikipedia.org/wiki/Being_and_Time",
+        content: `
+          <h3>Introduction: The Question of Being</h3>
+          <p>We must raise anew the question of the meaning of Being. But are we nowadays even perplexed at our inability to understand the expression 'Being'? Not at all. So first of all we must reawaken an understanding for the meaning of this question.</p>
+          
+          <h3>Division 1: Dasein's Being-in-the-World</h3>
+          <p>Dasein is an entity which does not just occur among other entities. Rather it is ontically distinguished by the fact that, in its very Being, that Being is an issue for it.</p>
+          
+          <h3>Division 2: Dasein and Temporality</h3>
+          <p>Time must be brought to light and genuinely conceived as the horizon for all understanding of Being and for any way of interpreting it. In order to make this visible, we need an original explication of Time as the horizon of the understanding of Being.</p>
+        `
+      },
+      {
+        id: "existentialism-humanism",
+        title: "Existentialism Is a Humanism",
+        author: "Jean-Paul Sartre",
+        year: 1946,
+        info: "Defense of existentialist thought",
+        link: "https://en.wikipedia.org/wiki/Existentialism_Is_a_Humanism",
+        content: `
+          <h3>Part I: Defining Existentialism</h3>
+          <p>Existentialism is nothing else than an attempt to draw all the consequences of a coherent atheistic position. It isn't trying to plunge man into despair at all. But if one calls every attitude of unbelief despair, like the Christians, then the word is not being used in its original sense.</p>
+          
+          <h3>Part II: Freedom and Responsibility</h3>
+          <p>Man is condemned to be free. Condemned, because he did not create himself, yet is nevertheless at liberty, and from the moment that he is thrown into this world he is responsible for everything he does.</p>
+          
+          <h3>Part III: The Human Condition</h3>
+          <p>When we say that man chooses himself, we do mean that every one of us must choose himself; but by that we also mean that in choosing for himself he chooses for all men.</p>
+        `
+      },
+      {
+        id: "ethics",
+        title: "Ethics",
+        author: "Baruch Spinoza",
+        year: 1677,
+        info: "Rationalist approach to ethics",
+        link: "https://en.wikipedia.org/wiki/Ethics_(Spinoza)",
+        content: `
+          <h3>Part I: Concerning God</h3>
+          <p>By substance, I understand that which is in itself and is conceived through itself; in other words, that, the conception of which does not need the conception of another thing from which it must be formed.</p>
+          
+          <h3>Part IV: Of Human Bondage</h3>
+          <p>Human infirmity in moderating and checking the emotions I name bondage: for, when a man is a prey to his emotions, he is not his own master, but lies at the mercy of fortune.</p>
+          
+          <h3>Part V: Of the Power of the Intellect</h3>
+          <p>The mind's highest good is the knowledge of God, and the mind's highest virtue is to know God. The more the mind knows, the better it understands its forces and the order of nature.</p>
+        `
+      },
+      {
+        id: "critique-pure-reason",
+        title: "Critique of Pure Reason",
+        author: "Immanuel Kant",
+        year: 1781,
+        info: "Foundational work of modern philosophy",
+        link: "https://en.wikipedia.org/wiki/Critique_of_Pure_Reason",
+        content: `
+          <h3>Preface to the First Edition</h3>
+          <p>Human reason has this peculiar fate that in one species of its knowledge it is burdened by questions which, as prescribed by the very nature of reason itself, it is not able to ignore, but which, as transcending all its powers, it is also not able to answer.</p>
+          
+          <h3>Transcendental Aesthetic: Space and Time</h3>
+          <p>Space is not an empirical concept which has been derived from outer experiences. For in order that certain sensations be referred to something outside me, the representation of space must be presupposed.</p>
+          
+          <h3>Transcendental Logic: The Categories</h3>
+          <p>Thoughts without content are empty, intuitions without concepts are blind. The understanding can intuit nothing, the senses can think nothing. Only through their union can knowledge arise.</p>
+        `
+      }
+    ];
+
+    // DOM Elements
+    const searchBar = document.getElementById('searchBar');
+    const toggleTheme = document.getElementById('toggleTheme');
+    const bookList = document.getElementById('bookList');
+    const bookModal = document.getElementById('bookModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalAuthor = document.getElementById('modalAuthor');
+    const bookContent = document.getElementById('bookContent');
+    const closeModal = document.querySelector('.close');
+    const printBook = document.getElementById('printBook');
+    const bookCount = document.getElementById('bookCount');
+
+    // Initialize Library
+    function initLibrary() {
+      bookList.innerHTML = ''; // Clear existing content
+      
+      books.forEach(book => {
+        const bookCard = document.createElement('div');
+        bookCard.className = 'book-card';
+        bookCard.innerHTML = `
+          <div class="book-info">
+            <h3>${book.title}</h3>
+            <p><strong>Author:</strong> ${book.author}</p>
+            <p><strong>Published:</strong> ${book.year}</p>
+            <p>${book.info}</p>
+            <div class="book-actions">
+              <button class="btn read-btn" data-id="${book.id}">
+                <i class="fas fa-book-open"></i> Read Book
+              </button>
+            </div>
+          </div>
+        `;
+        bookList.appendChild(bookCard);
+      });
+
+      // Set initial book count
+      bookCount.textContent = `${books.length} philosophy books available`;
+
+      // Add event listeners to read buttons
+      addReadButtonListeners();
+    }
+
+    // Add event listeners to read buttons
+    function addReadButtonListeners() {
+      document.querySelectorAll('.read-btn').forEach(button => {
+        button.addEventListener('click', function() {
+          const bookId = this.dataset.id;
+          const book = books.find(b => b.id === bookId);
+          if (book) {
+            openBookModal(book);
+          }
+        });
+      });
+    }
+
+    // Open book modal with content
+    function openBookModal(book) {
+      modalTitle.textContent = book.title;
+      modalAuthor.textContent = `by ${book.author}`;
+      bookContent.innerHTML = `
+        ${book.content}
+        <div class="book-link-container">
+          <a href="${book.link}" target="_blank" class="book-link-btn">
+            <i class="fas fa-external-link-alt"></i>
+            Read the original book
+          </a>
+        </div>
+      `;
+      bookModal.style.display = 'block';
+    }
+
+    // Close Modal
+    closeModal.addEventListener('click', () => {
+      bookModal.style.display = 'none';
+    });
+
+    // Close Modal when clicking outside
+    window.addEventListener('click', (e) => {
+      if (e.target === bookModal) {
+        bookModal.style.display = 'none';
+      }
+    });
+
+    // Print Book
+    printBook.addEventListener('click', () => {
+      window.print();
+    });
+
+    // Theme Toggle
+    toggleTheme.addEventListener('click', function() {
+      document.body.classList.toggle('dark-mode');
+      this.querySelector('span').textContent = 
+        document.body.classList.contains('dark-mode') ? 
+        '☀️ Light Mode' : '🌙 Dark Mode';
+    });
+
+    // Search Functionality
+    searchBar.addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      const bookCards = document.querySelectorAll('.book-card');
+      let visibleCount = 0;
+      
+      bookCards.forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        const author = card.querySelector('p').textContent.toLowerCase();
+        const isVisible = title.includes(query) || author.includes(query);
+        
+        card.style.display = isVisible ? 'block' : 'none';
+        if (isVisible) visibleCount++;
+      });
+      
+      bookCount.textContent = `${visibleCount} book${visibleCount !== 1 ? 's' : ''} found`;
+    });
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', initLibrary);
+  </script>
+</body>
+</html>

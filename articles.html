@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Articles Directory - eBookNest Digital Library</title>
+    <style>
+        /* Base Body Styles (from your existing pages) */
+        body {
+            font-family: 'Lora', serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #a2c0c7, #d0e4ea);
+            color: #222;
+            transition: background 0.3s, color 0.3s;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Floating Shapes Background (from your existing pages) */
+        .shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .shape {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(0, 169, 157, 0.2);
+            animation: floatShape 15s linear infinite;
+        }
+
+        @keyframes floatShape {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Header Styles (from your existing pages) */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            font-size: 20px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: #00a99d;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img.icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo h1 {
+            margin: 0;
+            font-size: 34px;
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background-color: white;
+            color: #333;
+        }
+
+        .toggle-btn {
+            background: white;
+            color: #00a99d;
+            border: none;
+            border-radius: 5px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .toggle-btn:hover {
+            background: #007f78;
+            color: white;
+        }
+
+        /* Main Content Area */
+        main {
+            flex-grow: 1;
+            padding: 40px 20px;
+            max-width: 600px; /* Adjusted max-width for vertical flow */
+            margin: 20px auto;
+            background-color: #f3f9fa; /* Consistent background with other sections */
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            line-height: 1.6;
+        }
+
+        /* Directory List Specific Styles */
+        h1.page-title {
+            text-align: center;
+            color: #008080;
+            font-size: 2.8em;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px #ddd;
+        }
+
+        .main-intro-paragraph {
+            text-align: center;
+            color: #555;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        /* Article Categories Vertical Flow */
+        .article-categories-grid {
+            /* Removed grid properties for vertical stacking */
+            padding: 0; /* Removed horizontal padding */
+        }
+
+        .article-category-card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            text-align: left;
+            width: 100%; /* Ensure cards take full width */
+            max-width: 500px; /* Constrain width of individual cards */
+            margin: 0 auto 25px auto; /* Center cards and add bottom margin for spacing */
+        }
+
+        .article-category-card:last-child {
+            margin-bottom: 0; /* No bottom margin for the last card */
+        }
+
+        .article-category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .article-category-card h3 {
+            font-size: 1.8em;
+            color: #00a99d;
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 8px;
+        }
+
+        .article-category-card p {
+            font-size: 0.95em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .news-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .news-links li {
+            background: none;
+            box-shadow: none;
+            padding: 8px 0;
+            margin-bottom: 5px;
+            border-bottom: 1px dotted #eee;
+            transition: none;
+        }
+
+        .news-links li:last-child {
+            border-bottom: none;
+        }
+
+        .news-links li:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .news-links a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: normal;
+            font-size: 1em;
+            display: block;
+            padding: 2px 0;
+        }
+
+        .news-links a:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+
+
+        /* Footer Styles (from your existing pages) */
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #e3f0f3;
+            color: #555;
+            flex-shrink: 0;
+        }
+
+        /* Dark Mode Styles */
+        .dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        .dark-mode header {
+            background-color: #11b8be;
+        }
+        .dark-mode .logo h1 {
+            color: #e0e0e0;
+        }
+        .dark-mode nav a {
+            color: #e0e0e0;
+        }
+        .dark-mode nav a:hover {
+            background-color: #e0e0e0;
+            color: #121212;
+        }
+        .dark-mode .toggle-btn {
+            background-color: #e0e0e0;
+            color: #121212;
+        }
+        .dark-mode .shape {
+            color: rgba(74, 26, 232, 0.616);
+        }
+        .dark-mode main {
+            background-color: #1e1e1e;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        .dark-mode h1.page-title {
+            color: #11b8be;
+            text-shadow: none;
+        }
+        .dark-mode .main-intro-paragraph {
+            color: #bbb;
+        }
+        .dark-mode .article-category-card {
+            background-color: #2a2a2a;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .dark-mode .article-category-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .dark-mode .article-category-card h3 {
+            color: #11b8be;
+            border-bottom-color: #444;
+        }
+        .dark-mode .article-category-card p {
+            color: #aaa;
+        }
+        .dark-mode .news-links li {
+            border-bottom-color: #3a3a3a; /* Darker dotted separator */
+        }
+        .dark-mode .news-links a {
+            color: #4db8ff;
+        }
+        .dark-mode .news-links a:hover {
+            color: #1a9cff;
+        }
+        .dark-mode footer {
+            background-color: #2a2a2a;
+            color: #bbb;
+        }
+
+        /* Media queries for responsiveness */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px 20px;
+            }
+            nav {
+                margin-top: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            main {
+                padding: 20px 15px;
+                margin: 15px auto;
+            }
+            h1.page-title {
+                font-size: 2.2em;
+            }
+            .article-categories-grid {
+                /* No changes needed, as it's already block on small screens */
+            }
+            .article-category-card h3 {
+                font-size: 1.6em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shapes" id="shapes-container"></div>
+
+    <header>
+        <div class="logo">
+            <img src="images/Library icon-Photoroom.png" class="icon" alt="eBookNest Logo" />
+            <h1>eBookNest</h1>
+        </div>
+        <nav>
+            <a href="main.html">Home</a>
+            <a href="about2.html">About</a>
+            <a href="contact trail.html">Contact Us</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="Loginnew.html">Login</a>
+            <button class="toggle-btn" onclick="toggleDarkMode()">🌙Dark</button>
+        </nav>
+    </header>
+
+    <main>
+        <h1 class="page-title">Popular Article Sources</h1>
+
+        <p class="main-intro-paragraph">Dive deeper into various topics with our curated list of reputable article sources. Explore a wide range of subjects from leading publications.</p>
+
+        <div class="article-categories-grid">
+            <div class="article-category-card">
+                <h3>Tech & Science</h3>
+                <p>Stay informed about advancements in technology and scientific discoveries.</p>
+                <ul class="news-links">
+                    <li><a href="https://www.wired.com/" target="_blank">Wired</a></li>
+                    <li><a href="https://www.nationalgeographic.com/" target="_blank">National Geographic</a></li>
+                    <li><a href="https://www.scientificamerican.com/" target="_blank">Scientific American</a></li>
+                    <li><a href="https://techcrunch.com/" target="_blank">TechCrunch</a></li>
+                </ul>
+            </div>
+            <div class="article-category-card">
+                <h3>Arts & Culture</h3>
+                <p>Explore articles on art, music, literature, and global cultures.</p>
+                <ul class="news-links">
+                    <li><a href="https://www.artsy.net/articles" target="_blank">Artsy Editorial</a></li>
+                    <li><a href="https://www.newyorker.com/culture" target="_blank">The New Yorker - Culture</a></li>
+                    <li><a href="https://www.smithsonianmag.com/arts-culture/" target="_blank">Smithsonian Magazine - Arts & Culture</a></li>
+                    <li><a href="https://www.hyperallergic.com/" target="_blank">Hyperallergic</a></li>
+                </ul>
+            </div>
+            <div class="article-category-card">
+                <h3>Health & Wellness</h3>
+                <p>Read insightful articles on health, fitness, and well-being.</p>
+                <ul class="news-links">
+                    <li><a href="https://www.healthline.com/" target="_blank">Healthline</a></li>
+                    <li><a href="https://www.webmd.com/news" target="_blank">WebMD News</a></li>
+                    <li><a href="https://www.mayoclinic.org/healthy-lifestyle" target="_blank">Mayo Clinic - Healthy Lifestyle</a></li>
+                    <li><a href="https://www.verywellmind.com/" target="_blank">Verywell Mind</a></li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 eBookNest Digital Library. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // --- Core Website Scripts ---
+        /**
+         * Toggles dark mode on and off by adding/removing the "dark-mode" class
+         * to the body element and saves the preference to local storage.
+         */
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+            // Save dark mode preference to localStorage
+            if (document.body.classList.contains("dark-mode")) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        }
+
+        const shapesContainer = document.getElementById("shapes-container");
+        const icon = "📚"; // The icon to be used for floating shapes
+
+        // Generates and appends multiple floating shapes to the background
+        for (let i = 0; i < 30; i++) {
+            const shape = document.createElement("div");
+            shape.classList.add("shape");
+            shape.innerText = icon;
+            // Randomly position shapes
+            shape.style.left = Math.random() * 100 + "%";
+            shape.style.top = Math.random() * 100 + 50 + "%";
+            // Randomly size shapes
+            shape.style.fontSize = Math.random() * 20 + 20 + "px";
+            // Randomize animation duration for varied floating speeds
+            shape.style.animationDuration = (Math.random() * 10 + 10) + "s";
+            shapesContainer.appendChild(shape);
+        }
+
+        /**
+         * Loads dark mode preference from local storage when the window loads.
+         * If dark mode was previously enabled, it applies the "dark-mode" class to the body.
+         */
+        window.onload = function() {
+            // Dark mode preference loading
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+            }
+        };
+    </script>
+</body>
+</html>

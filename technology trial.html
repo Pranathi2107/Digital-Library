@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Technology Books</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body {
+      font-family: lora;
+      background-color: #f8f9fa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #23bfb2d6;
+      color: white;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .book-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .book-card {
+      background: #ecf0f1;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+
+    .book-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .book-card h3 {
+      margin-bottom: 0.5rem;
+      color: #2c3e50;
+    }
+
+    .book-card p {
+      margin: 0.3rem 0;
+      font-size: 0.95rem;
+    }
+
+    .btn {
+      margin-top: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: #2980b9;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      overflow: auto;
+    }
+
+    .modal-content {
+      background-color: #ffffff;
+      margin: 3% auto;
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 900px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 35px;
+      font-weight: bold;
+      color: #aaa;
+      cursor: pointer;
+    }
+
+    .reader-header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .reader-header p {
+      color: #666;
+    }
+
+    .reader-controls {
+      display: flex;
+      justify-content: flex-end;
+      margin: 1rem 0;
+    }
+
+    .reader-controls .btn {
+      background: #2ecc71;
+    }
+
+    .book-content {
+      overflow-y: auto;
+      padding: 1rem;
+      background: #f4f4f4;
+      border-radius: 8px;
+      margin-top: 1rem;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .book-link-container {
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .book-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.5rem;
+      background: #27ae60;
+      color: white;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .book-link-btn:hover {
+      background: #219653;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .modal, .modal * {
+        visibility: visible;
+      }
+      .modal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: auto;
+        background: white;
+        padding: 0;
+        margin: 0;
+      }
+      .modal-content {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 20px;
+        box-shadow: none;
+        border-radius: 0;
+        max-height: none;
+      }
+      .close, .reader-controls, .reader-header p, .book-link-container {
+        display: none;
+      }
+      .reader-header h2 {
+        font-size: 24pt;
+        text-align: center;
+      }
+      .book-content {
+        height: auto;
+        overflow: visible;
+        padding: 0;
+        background: none;
+      }
+      .book-content p {
+        font-size: 12pt;
+        margin-bottom: 12pt;
+      }
+    }
+     .controls {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      #searchBar {
+        width: 90%;
+      }
+       #toggleTheme:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+     body.dark-mode {
+      background-color: #121212;
+      color: var(--text-light);
+      --light: #1e1e1e;
+      --dark: #f0f0f0;
+      --text: #e0e0e0;
+    }
+.controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1rem 0;
+      width: 100%;
+    }
+
+    #searchBar {
+      padding: 0.8rem 1.2rem;
+      border: none;
+      border-radius: 50px;
+      width: 60%;
+      max-width: 500px;
+      font-size: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    #searchBar:focus {
+      outline: none;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+      transform: translateY(-2px);
+    }
+
+    #toggleTheme {
+      background: var(--secondary);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #toggleTheme:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><i class="fas fa-laptop-code"></i> Technology Books</h1>
+    <div class="controls">
+      <input type="text" id="searchBar" placeholder="Search books by title or author...">
+      <button id="toggleTheme">
+        <span>🌙 Dark Mode</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="book-list" id="bookList"></div>
+  </div>
+
+  <!-- Book Reader Modal -->
+  <div id="bookModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div class="reader-header">
+        <h2 id="modalTitle">Book Title</h2>
+        <p id="modalAuthor">Author Name</p>
+      </div>
+      <div class="reader-controls">
+        <button id="printBook" class="btn">
+          <i class="fas fa-print"></i> Print Book
+        </button>
+      </div>
+      <div class="book-content" id="bookContent"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p><center>Technology Book Library &copy; 2025 | Explore the Digital Frontier</center></p>
+  </footer>
+
+  <script>
+    const books = [
+      {
+        id: "clean-code",
+        title: "Clean Code",
+        author: "Robert C. Martin",
+        year: 2008,
+        info: "A handbook of agile software craftsmanship",
+        link: "https://www.gutenberg.org/ebooks/17989", // Biography link
+        content: `
+          <h3>Chapter 1: Clean Code</h3>
+          <p>Code is clean if it can be understood easily – by everyone on the team. Clean code can be read and enhanced by a developer other than its original author. With understandability comes readability, changeability, extensibility and maintainability.</p>
+          
+          <h3>Chapter 3: Functions</h3>
+          <p>The first rule of functions is that they should be small. The second rule of functions is that they should be smaller than that. Functions should do one thing. They should do it well. They should do it only.</p>
+          
+          <h3>Chapter 5: Formatting</h3>
+          <p>Code formatting is about communication, and communication is the professional developer's first order of business. The coding style and readability set precedents that continue to affect maintainability and extensibility long after the original code has been changed beyond recognition.</p>
+        `
+      },
+      {
+        id: "design-patterns",
+        title: "Design Patterns",
+        author: "Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides",
+        year: 1994,
+        info: "Elements of reusable object-oriented software",
+        link: "https://www.gutenberg.org/ebooks/author/208", // Biography link
+        content: `
+          <h3>Introduction to Design Patterns</h3>
+          <p>Design patterns are descriptions of communicating objects and classes that are customized to solve a general design problem in a particular context. They capture solutions that have developed and evolved over time.</p>
+          
+          <h3>The Observer Pattern</h3>
+          <p>Define a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically. This pattern is the cornerstone of event handling systems.</p>
+          
+          <h3>The Singleton Pattern</h3>
+          <p>Ensure a class only has one instance, and provide a global point of access to it. This pattern is useful when exactly one object is needed to coordinate actions across the system.</p>
+        `
+      },
+      {
+        id: "pragmatic-programmer",
+        title: "The Pragmatic Programmer",
+        author: "Andrew Hunt, David Thomas",
+        year: 1999,
+        info: "Your journey to mastery in software development",
+        link: "https://www.gutenberg.org/ebooks/author/35830", // Biography link
+        content: `
+          <h3>Chapter 1: A Pragmatic Philosophy</h3>
+          <p>As a Pragmatic Programmer, you should take responsibility for everything you do. You should be a catalyst for change. You should remember the big picture. You should make quality a requirements issue.</p>
+          
+          <h3>Chapter 4: Pragmatic Paranoia</h3>
+          <p>You can't write perfect software. Software can't be perfect. Protect your code and users from the errors you will make. Use assertions to prevent the impossible. Use exceptions for exceptional problems.</p>
+          
+          <h3>Chapter 7: While You Are Coding</h3>
+          <p>Programming is a craft. At its simplest, it comes down to getting a computer to do what you want it to do. As a programmer, you are part listener, part advisor, part interpreter, and part dictator.</p>
+        `
+      },
+      {
+        id: "code-complete",
+        title: "Code Complete",
+        author: "Steve McConnell",
+        year: 1993,
+        info: "A practical handbook of software construction",
+        link: "https://www.gutenberg.org/ebooks/author/208", // Biography link
+        content: `
+          <h3>Chapter 1: Welcome to Software Construction</h3>
+          <p>Software construction is the central activity in software development; construction is the only activity that's guaranteed to happen on every project. The main activities in construction are detailed design, coding, debugging, and developer testing.</p>
+          
+          <h3>Chapter 5: Design in Construction</h3>
+          <p>Design is the process of deciding how all the components of the software should be organized and how they should work together. Good design is practical, and it should minimize the time required to create, modify, and maintain the software while achieving acceptable runtime performance.</p>
+          
+          <h3>Chapter 10: General Issues in Using Variables</h3>
+          <p>Data initialization is one of the most error-prone areas in programming. Initialize each variable as it's declared. Initialize each variable close to where it's first used. Initialize variables used in loops immediately before the loop.</p>
+        `
+      },
+      {
+        id: "refactoring",
+        title: "Refactoring",
+        author: "Martin Fowler",
+        year: 1999,
+        info: "Improving the design of existing code",
+        link: "https://www.gutenberg.org/ebooks/17989", // Biography link
+        content: `
+          <h3>Chapter 1: Refactoring, a First Example</h3>
+          <p>Refactoring is the process of changing a software system in such a way that it does not alter the external behavior of the code yet improves its internal structure. It is a disciplined way to clean up code that minimizes the chances of introducing bugs.</p>
+          
+          <h3>Chapter 6: Composing Methods</h3>
+          <p>Much of refactoring is composing methods to package code properly. Almost all the time the key is making small methods that communicate their purpose. This chapter discusses the refactorings that break down long methods.</p>
+          
+          <h3>Chapter 10: Making Method Calls Simpler</h3>
+          <p>Interfaces form the boundaries between different parts of the system. Making these interfaces simple and clear makes the system much easier to understand. This chapter explores refactorings that make interfaces more straightforward.</p>
+        `
+      },
+      {
+        id: "mythical-man-month",
+        title: "The Mythical Man-Month",
+        author: "Fred Brooks",
+        year: 1975,
+        info: "Essays on software engineering",
+        link: "https://www.gutenberg.org/ebooks/author/35830", // Biography link
+        content: `
+          <h3>Chapter 1: The Tar Pit</h3>
+          <p>Programming systems product development is a tar pit that has trapped many development teams. The product must be perfectly usable before it is built. The product must be perfectly documented. The product must be tested. All of these things take time.</p>
+          
+          <h3>Chapter 2: The Mythical Man-Month</h3>
+          <p>Adding manpower to a late software project makes it later. Good cooking takes time. If you are made to wait, it is to serve you better, and to please you. Men and months are interchangeable commodities only when a task can be partitioned among many workers with no communication between them.</p>
+          
+          <h3>Chapter 16: No Silver Bullet</h3>
+          <p>There is no single development, in either technology or management technique, that by itself promises even one order-of-magnitude improvement in productivity, in reliability, in simplicity. The essence of software development is the process of gradually refining a complex mental construct.</p>
+        `
+      },
+      {
+        id: "algorithms",
+        title: "Introduction to Algorithms",
+        author: "Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, Clifford Stein",
+        year: 1989,
+        info: "The standard textbook on algorithms",
+        link: "https://www.gutenberg.org/ebooks/17989", // Biography link
+        content: `
+          <h3>Chapter 1: The Role of Algorithms in Computing</h3>
+          <p>An algorithm is any well-defined computational procedure that takes some value, or set of values, as input and produces some value, or set of values, as output. An algorithm is thus a sequence of computational steps that transform the input into the output.</p>
+          
+          <h3>Chapter 3: Growth of Functions</h3>
+          <p>The order of growth of the running time of an algorithm gives a simple characterization of the algorithm's efficiency and also allows us to compare the relative performance of alternative algorithms.</p>
+          
+          <h3>Chapter 22: Elementary Graph Algorithms</h3>
+          <p>A graph G = (V, E) consists of a set of vertices V and a set of edges E. Each edge is a pair (u, v), where u and v are vertices. Graphs provide a powerful way to model and solve problems in computer science.</p>
+        `
+      }
+    ];
+
+    const searchBar = document.getElementById('searchBar');
+    const toggleTheme = document.getElementById('toggleTheme');
+    const bookList = document.getElementById('bookList');
+    const bookModal = document.getElementById('bookModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalAuthor = document.getElementById('modalAuthor');
+    const bookContent = document.getElementById('bookContent');
+    const closeModal = document.querySelector('.close');
+    const printBook = document.getElementById('printBook');
+
+    function initLibrary() {
+      books.forEach(book => {
+        const bookCard = document.createElement('div');
+        bookCard.className = 'book-card';
+        bookCard.innerHTML = `
+          <div class="book-info">
+            <h3>${book.title}</h3>
+            <p><strong>Author:</strong> ${book.author}</p>
+            <p><strong>Published:</strong> ${book.year}</p>
+            <p class="book-meta">${book.info}</p>
+            <div class="book-actions">
+              <button class="btn read-btn" data-id="${book.id}">
+                <i class="fas fa-book-open"></i> Read Book
+              </button>
+            </div>
+          </div>
+        `;
+        bookList.appendChild(bookCard);
+      });
+
+      document.querySelectorAll('.read-btn').forEach(button => {
+        button.addEventListener('click', function () {
+          const bookId = this.dataset.id;
+          const book = books.find(b => b.id === bookId);
+          if (book) {
+            modalTitle.textContent = book.title;
+            modalAuthor.textContent = `by ${book.author}`;
+            bookContent.innerHTML = `
+              ${book.content}
+              <div class="book-link-container">
+                <a href="${book.link}" target="_blank" class="book-link-btn">
+                  <i class="fas fa-external-link-alt"></i>
+                  Read the original book
+                </a>
+              </div>
+            `;
+            bookModal.style.display = 'block';
+          }
+        });
+      });
+
+      closeModal.addEventListener('click', () => {
+        bookModal.style.display = 'none';
+      });
+
+      window.addEventListener('click', (e) => {
+        if (e.target === bookModal) {
+          bookModal.style.display = 'none';
+        }
+      });
+
+      printBook.addEventListener('click', () => {
+        window.print();
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', initLibrary);
+      // Theme toggle
+      toggleTheme.addEventListener('click', function() {
+        document.body.classList.toggle('dark-mode');
+        this.querySelector('span').textContent = 
+          document.body.classList.contains('dark-mode') ? 
+          'Light Mode' : 'Dark Mode';
+      });
+       // Search functionality
+      searchBar.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        const bookCards = document.querySelectorAll('.book-card');
+        let visibleCount = 0;
+        
+        bookCards.forEach(card => {
+          const title = card.querySelector('h3').textContent.toLowerCase();
+          const author = card.querySelector('p').textContent.toLowerCase();
+          const isVisible = title.includes(query) || author.includes(query);
+          
+          card.style.display = isVisible ? 'block' : 'none';
+          if (isVisible) visibleCount++;
+        });
+        bookCount.textContent = `${visibleCount} books found`;
+      });
+  </script>
+</body>
+</html>

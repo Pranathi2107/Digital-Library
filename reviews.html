@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Popular Book Collection - Digital Library</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lora&display=swap');
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #2f3e46;
+            transition: background-color 0.5s, color 0.5s;
+            line-height: 1.6;
+        }
+
+        /* --- Navigation Bar Styles (from your main page) --- */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            font-size: 20px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: #00a99d;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img.icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo h1 {
+            margin: 0;
+            font-size: 34px;
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background-color: white;
+            color: #333;
+        }
+
+        .toggle-btn {
+            background: white;
+            color: #00a99d;
+            border: none;
+            border-radius: 5px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .toggle-btn:hover {
+            background: #007f78;
+            color: white;
+        }
+        /* --- End Navigation Bar Styles --- */
+
+
+        /* --- Popular Book Collection Styles (adjusted) --- */
+        #page-title {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid white;
+            width: 0;
+            font-weight: 700;
+            font-size: 2.4rem;
+            letter-spacing: 2px;
+            animation: typing 3s steps(30, end) forwards, blink 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 440px } /* Adjusted width for "Popular Book Collection" */
+        }
+
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
+        main {
+            padding: 30px 15px 60px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .book-entry { /* Changed from .review */
+            background: linear-gradient(145deg, #ffffff, #e0f2f1);
+            margin-bottom: 40px;
+            padding: 25px 30px 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgb(0 169 157 / 0.15);
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            cursor: default;
+            user-select: none;
+        }
+
+        .book-entry.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .book-entry h2 { /* Changed from .review h2 */
+            margin: 0 0 15px 0;
+            color: #00796b;
+            font-size: 1.8rem;
+            cursor: pointer;
+            user-select: text;
+            position: relative;
+            padding-right: 30px;
+        }
+
+        .book-details { /* Changed from .review-content */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-top: 10px;
+        }
+
+        .book-cover {
+            max-width: 200px;
+            border-radius: 10px;
+            box-shadow: 0 6px 14px rgb(0 169 157 / 0.2);
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .book-cover:hover {
+            transform: scale(1.07);
+        }
+
+        .book-info { /* Changed from .review-info */
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .book-info p {
+            margin: 6px 0;
+            font-size: 1rem;
+        }
+
+        /* Star rating style */
+        .stars {
+            color: #00796b;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+        .stars span {
+            margin-right: 3px;
+        }
+        .stars .empty-star {
+            color: #ccc;
+        }
+
+        footer {
+            background-color: #00a99d;
+            color: white;
+            text-align: center;
+            padding: 15px 10px;
+            font-weight: 600;
+            box-shadow: 0 -4px 8px rgb(0 169 157 / 0.3);
+            user-select: none;
+        }
+
+        #backToTop {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: #00a99d;
+            color: white;
+            padding: 14px 18px;
+            border: none;
+            border-radius: 50%;
+            font-size: 22px;
+            cursor: pointer;
+            display: none;
+            z-index: 999;
+            box-shadow: 0 6px 16px rgba(0, 169, 157, 0.6);
+            transition: background-color 0.3s ease;
+            user-select: none;
+        }
+
+        #backToTop:hover {
+            background-color: #007f78;
+        }
+
+        /* Dark Mode Styles (from your main page) */
+        .dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+
+        .dark-mode header {
+            background-color: #11b8be;
+        }
+
+        .dark-mode .book-entry { /* Changed from .review */
+            background: linear-gradient(145deg, #1f1f1f, #2a2a2a);
+            box-shadow: 0 8px 16px rgba(0, 184, 190, 0.15);
+        }
+
+        .dark-mode .book-entry h2 { /* Changed from .review h2 */
+            color: #00e6e6;
+        }
+
+        .dark-mode .book-info p { /* Changed from .review-info p */
+            color: #e0e0e0;
+        }
+
+        .dark-mode .stars {
+            color: #00e6e6;
+        }
+
+        .dark-mode .stars .empty-star {
+            color: #555; /* Darker empty stars in dark mode */
+        }
+
+        .dark-mode footer {
+            background-color: #11b8be;
+        }
+
+        .dark-mode #backToTop {
+            background-color: #11b8be;
+            box-shadow: 0 6px 16px rgba(0, 184, 190, 0.6);
+        }
+
+        .dark-mode #backToTop:hover {
+            background-color: #00a6aa;
+        }
+
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            main {
+                padding: 25px 12px 50px;
+            }
+
+            .book-details { /* Changed from .review-content */
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .book-details .book-info { /* Changed from .review-content .review-info */
+                width: 100%;
+            }
+
+            .book-entry h2 { /* Changed from .review h2 */
+                font-size: 1.5rem;
+                padding-right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img src="images/Library icon-Photoroom.png" class="icon" alt="Library Icon" />
+        <h1>eBookNest</h1>
+    </div>
+
+    <nav>
+        <a href="main.html">Home</a>
+        <a href="about2.html">About</a>
+        <a href="contact trail.html">Contact Us</a>
+        <a href="popular_books.html">Popular Books</a> <a href="Loginnew.html">Login</a>
+        <button class="toggle-btn" onclick="toggleDarkMode()">🌙Dark</button>
+    </nav>
+</header>
+
+<main>
+    <h1 style="text-align: center; color: #00a99d; margin-bottom: 40px;"><span id="page-title">Popular Book Collection</span></h1>
+
+    <section class="book-entry fade-in"> <h2 tabindex="0">The Great Gatsby</h2>
+        <div class="book-details"> <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4rPO99IWze8odGansFy8qxlcMwb7aG9zfgA&s" alt="The Great Gatsby Cover" class="book-cover" />
+            <div class="book-info"> <p><strong>Author:</strong> F. Scott Fitzgerald</p>
+                <p><strong>Genre:</strong> Fiction</p>
+                <p><strong>Published:</strong> 1925</p>
+                <p class="stars" aria-label="Rating: 5 stars">
+                    <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span>
+                </p>
+                <p><strong>Description:</strong> A captivating and tragic portrayal of the American Dream.</p> </div>
+        </div>
+    </section>
+
+    <section class="book-entry fade-in"> <h2 tabindex="0">To Kill a Mockingbird</h2>
+        <div class="book-details"> <img src="https://www.bing.com/th/id/OIP.W1ngiF2AkQaO78CY9yC1HQHaLd?w=150&h=233&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2" alt="To Kill a Mockingbird Cover" class="book-cover" />
+            <div class="book-info"> <p><strong>Author:</strong> Harper Lee</p>
+                <p><strong>Genre:</strong> Fiction</p>
+                <p><strong>Published:</strong> 1960</p>
+                <p class="stars" aria-label="Rating: 5 stars">
+                    <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span>
+                </p>
+                <p><strong>Description:</strong> A powerful story on justice, empathy, and human behavior.</p> </div>
+        </div>
+    </section>
+
+    <section class="book-entry fade-in"> <h2 tabindex="0">1984</h2>
+        <div class="book-details"> <img src="https://th.bing.com/th/id/OIP.Z5KLQbybGAxlM5JdjOWeWwHaKe?rs=1&pid=ImgDetMain" alt="1984 Cover" class="book-cover" />
+            <div class="book-info"> <p><strong>Author:</strong> George Orwell</p>
+                <p><strong>Genre:</strong> Dystopian Fiction</p>
+                <p><strong>Published:</strong> 1949</p>
+                <p class="stars" aria-label="Rating: 4 stars">
+                    <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span class="empty-star">&#9734;</span>
+                </p>
+                <p><strong>Description:</strong> A chilling vision of totalitarianism and surveillance.</p> </div>
+        </div>
+    </section>
+
+    <section class="book-entry fade-in"> <h2 tabindex="0">Pride and Prejudice</h2>
+        <div class="book-details"> <img src="https://th.bing.com/th/id/OIP.BFphXSy0Q1hijrcFhAI28QHaLa?rs=1&pid=ImgDetMain" alt="Pride and Prejudice Cover" class="book-cover" />
+            <div class="book-info"> <p><strong>Author:</strong> Jane Austen</p>
+                <p><strong>Genre:</strong> Romance</p>
+                <p><strong>Published:</strong> 1813</p>
+                <p class="stars" aria-label="Rating: 5 stars">
+                    <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span>
+                </p>
+                <p><strong>Description:</strong> A witty and romantic exploration of manners and marriage.</p> </div>
+        </div>
+    </section>
+
+    <section class="book-entry fade-in"> <h2 tabindex="0">The Catcher in the Rye</h2>
+        <div class="book-details"> <img src="https://th.bing.com/th/id/OIP.DKPW6BaVJfMK1Whg8KjK0QHaKd?w=202&h=286&c=7&r=0&o=5&dpr=1.5&pid=1.7" alt="The Catcher in the Rye Cover" class="book-cover" />
+            <div class="book-info"> <p><strong>Author:</strong> J.D. Salinger</p>
+                <p><strong>Genre:</strong> Fiction</p>
+                <p><strong>Published:</strong> 1951</p>
+                <p class="stars" aria-label="Rating: 3 stars">
+                    <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span class="empty-star">&#9734;</span><span class="empty-star">&#9734;</span>
+                </p>
+                <p><strong>Description:</strong> A coming-of-age story with raw emotional depth.</p> </div>
+        </div>
+    </section>
+</main>
+
+<button id="backToTop" title="Back to Top" aria-label="Back to top">↑</button>
+
+<footer>
+    <p>&copy; 2025 Digital Library. All rights reserved.</p>
+</footer>
+
+<script>
+    // Fade-in on scroll with Intersection Observer
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Back to Top button show/hide & scroll
+    const backToTop = document.getElementById("backToTop");
+    window.addEventListener("scroll", () => {
+        backToTop.style.display = window.scrollY > 300 ? "block" : "none";
+    });
+    backToTop.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    // --- Dark Mode Toggle and Persistence ---
+    function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+        // Save the preference to localStorage
+        if (document.body.classList.contains("dark-mode")) {
+            localStorage.setItem("darkMode", "enabled");
+        } else {
+            localStorage.setItem("darkMode", "disabled");
+        }
+        // Update the button text
+        updateDarkModeButtonText();
+    }
+
+    // Function to update the dark mode button text
+    function updateDarkModeButtonText() {
+        const toggleBtn = document.querySelector(".toggle-btn");
+        if (toggleBtn) {
+            if (document.body.classList.contains("dark-mode")) {
+                toggleBtn.textContent = "☀Light";
+            } else {
+                toggleBtn.textContent = "🌙Dark";
+            }
+        }
+    }
+
+    // Apply dark mode on page load and update button text
+    document.addEventListener("DOMContentLoaded", () => {
+        if (localStorage.getItem("darkMode") === "enabled") {
+            document.body.classList.add("dark-mode");
+        }
+        updateDarkModeButtonText(); // Call this to set initial button text
+    });
+</script>
+
+</body>
+</html>

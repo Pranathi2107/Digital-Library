@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Digital Library - Home</title>
+  <style>
+    body {
+      margin: 0;
+      font-family:lora;
+      transition: background 0.3s, color 0.3s;
+      background: #ffffff;
+    }
+
+    .shapes {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+      opacity:0.3;
+    }
+
+    .shape {
+      position: absolute;
+      font-size: 24px;
+      color: rgba(0, 169, 157, 0.2);
+      animation: floatShape 15s linear infinite;
+    }
+
+    @keyframes floatShape {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-120vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      font-size: 20px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      background-color: #00a99d;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img.icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    .logo h1 {
+      margin: 0;
+      font-size: 34px;
+      color: white;
+    }
+
+    nav {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    nav a {
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-weight: bold;
+      color: white;
+      transition: background 0.3s;
+    }
+
+    nav a:hover {
+      background-color: white;
+      color: #333;
+    }
+
+    .toggle-btn {
+      background: white;
+      color: #00a99d;
+      border: none;
+      border-radius: 5px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .toggle-btn:hover {
+      background: #007f78;
+      color: white;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 40px;
+      font-family: 'Lora', serif;
+      font-size: 20px;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    .text-section {
+      width: 50%;
+      font-size: 30px;
+    }
+
+    .bookshelf {
+      width: 50%;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .bookshelf img {
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s;
+    }
+
+    .bookshelf img:hover {
+      transform: scale(1.05);
+    }
+
+    .learn-more {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #00a99d;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      animation: shadowPulse 2.5s infinite ease-in-out;
+    }
+
+    @keyframes slideRight {
+      0% { transform: translateX(0); }
+      50% { transform: translateX(20px); }
+      100% { transform: translateX(0); }
+    }
+
+    .text-section h1 {
+      animation: slideRight 3s ease-in-out infinite;
+    }
+
+    @keyframes shadowPulse {
+      0%, 100% {
+        box-shadow: 0 0 10px #00a99d;
+      }
+      50% {
+        box-shadow: 0 0 20px #00a99d;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .text-section,
+      .bookshelf {
+        width: 100%;
+      }
+
+      nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+    }
+
+    .dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    .dark-mode header {
+      background-color: #11b8be;
+    }
+
+    .dark-mode .text-section,
+    .dark-mode .container {
+      font-family: lora;
+      font-size:20px;
+      color: #11b8be;
+    }
+
+    .dark-mode nav a {
+      color: #e0e0e0;
+    }
+
+    .dark-mode nav a:hover {
+      background-color: #e0e0e0;
+      color: #121212;
+    }
+
+    .dark-mode .toggle-btn {
+      background-color: #e0e0e0;
+      color: #121212;
+    }
+
+    .dark-mode .learn-more {
+      background-color: #007f78;
+    }
+    .dark-mode .shape {
+  color: rgba(74, 26, 232, 0.616);
+}
+
+   
+  </style>
+</head>
+<body>
+  <div class="shapes" id="shapes-container"></div>
+
+  <header>
+    <div class="logo">
+     <img src="images/Library icon-Photoroom.png" class="icon" />
+      <h1>eBookNest</h1>
+    </div>
+
+    <nav>
+      <a href="main.html">Home</a>
+      <a href="about2.html">About</a>
+      <a href="contact trail.html">Contact Us</a>
+
+      <a href="reviews.html">Popular Books</a>
+
+      
+      <a href="Loginnew.html">Login</a>
+      <button class="toggle-btn" onclick="toggleDarkMode()">🌙Dark</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="text-section">
+      <h1>WELCOME TO DIGITAL LIBRARY</h1>
+<p style="font-size: 16px;">
+  Explore thousands of books, articles, and journals all in one place. Our digital library offers seamless access to academic and leisure reading materials anytime, anywhere.
+</p>
+
+      <a href="learnmore1.html" class="learn-more">Learn More</a>
+    </div>
+
+    <div class="bookshelf">
+      <img src="./images/ImageDigitallibrary.png" alt="Bookshelf Image" />
+    </div>
+   
+
+  </main>
+
+    <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+    }
+
+    const container = document.getElementById("shapes-container");
+    const icon = "📘";
+
+    for (let i = 0; i < 30; i++) {
+      const shape = document.createElement("div");
+      shape.classList.add("shape");
+      shape.innerText = icon;
+      shape.style.left = Math.random() * 100 + "%";
+      shape.style.top = Math.random() * 100 + 50 + "%";
+      shape.style.fontSize = Math.random() * 20 + 20 + "px";
+      shape.style.animationDuration = (Math.random() * 10 + 10) + "s";
+      container.appendChild(shape);
+    }
+
+    // ✅ Greeting Script — CORRECT LOCATION
+    const hour = new Date().getHours();
+    const greet = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+    document.querySelector(".text-section h1").innerText = `${greet}, Welcome to Digital Library`;
+
+  </script>
+</body>
+</html>   
